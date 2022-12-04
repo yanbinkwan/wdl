@@ -1,0 +1,43 @@
+body {
+  font-family: sans-serif;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  display: flex;
+}
+
+.svg-box {
+  width: 100%;
+  height: 650px;
+  border: 2px solid gray;
+  margin: 20px;
+}
+
+.drag-container {
+  position: absolute;
+  border-radius: 10px;
+  padding: 10px;
+  right: 5%;
+  top: 5%;
+  width: 150px;
+  height: 250px;
+  background: #eeeeee;
+}
+
+.node-g {
+  cursor: grab;
+}
+.outputs {
+  cursor: pointer;
+}
+.items {
+  width: 100px;
+  height: 25px;
+  margin-top: 10px;
+  background-color: powderblue;
+  cursor: -webkit-grab;
+}
