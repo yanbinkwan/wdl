@@ -5,39 +5,83 @@ body {
   margin: 0;
   padding: 0;
 }
-
 #app {
-  display: flex;
+  padding: 20px;
 }
-
 .svg-box {
   width: 100%;
   height: 650px;
   border: 2px solid gray;
-  margin: 20px;
+  /* margin: 20px; */
 }
 
 .drag-container {
   position: absolute;
   border-radius: 10px;
   padding: 10px;
-  right: 5%;
-  top: 5%;
+  right: 0;
+  bottom: 0;
   width: 150px;
-  height: 250px;
+  height: 150px;
   background: #eeeeee;
 }
 
 .node-g {
   cursor: grab;
 }
-.outputs {
+.outputs,
+.inputs {
   cursor: pointer;
 }
 .items {
-  width: 100px;
+  width: 100%;
+  padding: 5px 0;
+  cursor: grab;
   height: 25px;
+  text-align: center;
   margin-top: 10px;
   background-color: powderblue;
+}
+rect {
   cursor: -webkit-grab;
+}
+
+.dialog {
+  width: 200px;
+  height: 200px;
+  background: gray;
+  position: fixed;
+  left: 5%;
+  top: 45%;
+}
+
+.context_menu {
+  position: fixed;
+  width: 60px;
+  height: 65px;
+  background: rgb(240 255 255);
+  z-index: 1;
+  box-shadow: 0 0 5px gainsboro;
+}
+
+.context_menu ul li {
+  list-style: none;
+  text-align: center;
+  font-size: 14px;
+  padding: 5px 0;
+  line-height: 1.4em;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  color: rgb(169 169 169);
+}
+
+.context_menu ul li:hover {
+  color: black;
+}
+.context_menu ul li:active {
+  color: rgb(169 169 169);
+}
+
+.context_menu ul li:nth-last-child(-n + 1) {
+  border: none;
 }

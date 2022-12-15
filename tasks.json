@@ -1,0 +1,57 @@
+{
+  "tasks": [
+    {
+      "id": 1998001,
+      "type": "input",
+      "label": "input_node",
+      "outputParams": [
+        {
+          "type": "String",
+          "value": "Input_Task_Output_Value1"
+        },
+        {
+          "type": "String",
+          "value": "Input_Task_Output_Value2"
+        }
+      ]
+    },
+    {
+      "id": 1998002,
+      "type": "output",
+      "label": "output_node",
+      "inputParams": [
+        {
+          "label": "input_param_1",
+          "value": ""
+        },
+        {
+          "label": "input_param_2",
+          "value": ""
+        },
+        {
+          "label": "input_param_2",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": 1998003,
+      "type": "task",
+      "label": "Echo_Task",
+      "inputParams": [
+        {
+          "label": "out",
+          "type": "String",
+          "value": ""
+        }
+      ],
+      "outputParams": [
+        {
+          "label": "outFile",
+          "type": "File",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}
