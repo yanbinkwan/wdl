@@ -24,50 +24,10 @@ export default function () {
       .text(d => d)
       .attr("y", 26)
       .attr("dx", -2)
-      .attr("font-size", "6")
+      .attr("font-size", "5")
       .on("contextmenu", event => {
         event.preventDefault();
       });
-
-    const inputs = group
-      .selectAll("circle.inputs")
-      .data(d => d.inputParams || [])
-      .join("circle")
-      .attr("class", "inputs")
-      .attr("cx", d => {
-        d.x = 0;
-        return d.x;
-      })
-      .attr("cy", (d, i) => {
-        d.y = i * 5 + 5;
-        return d.y;
-      })
-      .attr("r", d => {
-        d.r = 1.4;
-        return d.r;
-      })
-      .attr("fill", "red");
-
-    const outputs = group
-      .selectAll("circle.outputs")
-      .data(d => d.outputParams || [])
-      .join("circle")
-      .attr("class", "outputs")
-      .attr("cx", d => {
-        d.x = 20;
-        return d.x;
-      })
-      .attr("cy", (d, i) => {
-        d.y = i * 5 + 5;
-        return d.y;
-      })
-      .attr("r", d => {
-        d.r = 1.4;
-        return d.r;
-      })
-      .attr("fill", "red")
-      .call(linkNode(selection));
-
     const rects = group
       .selectAll("rect.container")
       .data([null])
@@ -104,6 +64,47 @@ export default function () {
             })
         );
       });
+
+    const inputs = group
+      .selectAll("circle.inputs")
+      .data(d => d.inputParams || [])
+      .join("circle")
+      .attr("class", "inputs")
+      .attr("cx", d => {
+        d.x = 0.1;
+        return d.x;
+      })
+      .attr("cy", (d, i, x) => {
+        const y = 20 / x.length;
+        d.y = i * y + 1.4 * 2;
+        return d.y;
+      })
+      .attr("r", d => {
+        d.r = 1.4;
+        return d.r;
+      })
+      .attr("fill", "#272643");
+
+    const outputs = group
+      .selectAll("circle.outputs")
+      .data(d => d.outputParams || [])
+      .join("circle")
+      .attr("class", "outputs")
+      .attr("cx", d => {
+        d.x = 20;
+        return d.x;
+      })
+      .attr("cy", (d, i, x) => {
+        const y = 20 / x.length;
+        d.y = i * y + 1.4 * 2;
+        return d.y;
+      })
+      .attr("r", d => {
+        d.r = 1.4;
+        return d.r;
+      })
+      .attr("fill", "#272643")
+      .call(linkNode(selection));
   };
 
   ins.data = _ => (_ ? (data = _) && ins : data);
@@ -112,6 +113,7 @@ export default function () {
     function dragstarted() {
       d3.select(this).attr("class", "node-g grabing");
     }
+
     function dragged(event, d) {
       // translate g element
       const { x, y } = event;
@@ -137,14 +139,16 @@ export default function () {
       d.outputParams &&
         d.outputParams.forEach(output => {
           const { pathID } = output;
-          if (pathID) {
-            d3.select("." + pathID).attr(
-              "d",
-              d3.linkHorizontal().source(d => {
-                d.source = [x + output.x, y + output.y];
-                return d.source;
-              })
-            );
+          if (pathID.length > 0) {
+            pathID.forEach(id => {
+              d3.select("." + id).attr(
+                "d",
+                d3.linkHorizontal().source(d => {
+                  d.source = [x + output.x, y + output.y];
+                  return d.source;
+                })
+              );
+            });
           }
         });
     }
@@ -163,8 +167,10 @@ export default function () {
   const linkNode = selection => {
     function dragstarted(event, d) {
       const parentData = getParentData(d.pid);
-      d.pathID = `path-${d.pid}-${d.value}`;
-
+      if (!d.pathID) {
+        d.pathID = [];
+      }
+      d.pathID.push(`path-${d.pid}-${d.value}` + d3.randomInt(0, 9999)());
       const x = event.x + parentData.x;
       const y = event.y + parentData.y;
       d.source = [x, y];
@@ -172,7 +178,10 @@ export default function () {
       selection
         .append("path")
         .data([{ sourceNode: d, source: d.source }])
-        .attr("class", d => d.sourceNode.pathID);
+        .attr(
+          "class",
+          d => d.sourceNode.pathID[d.sourceNode.pathID.length - 1]
+        );
     }
 
     function dragged(event, d) {
@@ -181,8 +190,8 @@ export default function () {
       const y = event.y + parentData.y;
       d.target = [x, y];
       selection
-        .select("." + d.pathID)
-        .attr("stroke", "black")
+        .select("." + d.pathID[d.pathID.length - 1])
+        .attr("stroke", "#85c9d1")
         .attr("fill", "none")
         .attr(
           "d",
@@ -209,17 +218,27 @@ export default function () {
         });
 
       if (hasLinked.size() > 0) {
+        d3.select(this)
+          .attr("fill", "#85c9d1")
+          .attr("stroke", "#272643")
+          .attr("stroke-width", "0.7");
         d.target[(x, y)];
         d.link = selection
-          .select("." + d.pathID)
-          .attr("stroke", "black")
-          .attr("fill", "none")
+          .select("." + d.pathID[d.pathID.length - 1])
+
           .attr("d", d3.linkHorizontal())
           .lower();
-        hasLinked.each(link => (link.pathID = d.pathID));
-        d.pathID = d.pathID;
+        hasLinked.each(link => (link.pathID = d.pathID[d.pathID.length - 1]));
+        // d.pathID = d.pathID;
+        const targetInputData = hasLinked.datum();
+        const targetParentData = getParentData(targetInputData.pid);
+        dispatch.call("link", null, {
+          source: d,
+          target: targetParentData,
+          targetInput: targetInputData
+        });
       } else {
-        selection.select("." + d.pathID).remove();
+        selection.select("." + d.pathID[d.pathID.length - 1]).remove();
       }
     }
 

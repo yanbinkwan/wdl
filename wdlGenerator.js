@@ -8,15 +8,23 @@ export default class Generator {
   }
 
   pushTask(task) {
+    console.log(task);
     if (task.type === "task") {
-      // imports[task.label] = task.label;
+      this.imports[task.label] = task.label;
     }
     this.tasks.push(task);
   }
 
   removeTask(id) {
+    console.log(id);
     const index = this.tasks.findIndex(task => task.id === id);
     this.tasks.splice(index, 1);
+    console.log(this.root.children);
+    this.root.children.forEach((child, i) => {
+      if (child.task.id === id) {
+        this.root.children.splice(i, 1);
+      }
+    });
   }
 
   generate() {
@@ -38,8 +46,18 @@ export default class Generator {
         });
       }
     });
+    let imports = "";
+    Object.keys(this.imports).forEach(key => {
+      const im = this.imports[key];
+      imports += `import "${im}" as ${im} \n`;
+    });
 
-    str = `workflow ${this.root.label} {\n${s}\n}`;
+    str = `
+version 1.0
+
+${imports}
+workflow ${this.root.label} {\n${s}\n}`;
+
     console.log(str);
   }
 }

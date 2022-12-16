@@ -19,6 +19,9 @@ function initSvg() {
     .call(dropzone)
     .on("contextmenu", event => {
       event.preventDefault();
+    })
+    .on("click", event => {
+      d3.select(".context_menu").remove();
     });
   return svg.node();
 }
@@ -79,7 +82,6 @@ function handleLinkEvent(params) {
 }
 
 function handleTaskDeleteEvent(data) {
-  console.log(data);
   data.outputParams &&
     data.outputParams.forEach(output => {
       if (output.pathID) {

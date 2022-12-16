@@ -8,10 +8,6 @@
         {
           "type": "String",
           "value": "Input_Task_Output_Value1"
-        },
-        {
-          "type": "String",
-          "value": "Input_Task_Output_Value2"
         }
       ]
     },
