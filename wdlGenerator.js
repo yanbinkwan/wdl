@@ -42,7 +42,7 @@ export default class Generator {
           task: { outputParams }
         } = child;
         outputParams.forEach(output => {
-          s += `\t${output.type} ${output.value} \n`;
+          s += `\t${output.type} ${output.label} \n`;
         });
       }
     });

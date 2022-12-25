@@ -70,7 +70,7 @@ function dropzone(selection) {
 
 function handleLinkEvent(params) {
   const { source, target, targetInput } = params;
-  source.to = targetInput;
+  // source.to = targetInput;
   targetInput.value = source;
   generator.root.children.push({
     type: target.type === "task" ? "call" : "output",
@@ -103,11 +103,19 @@ function main() {
   loadTasks();
   d3.select("#app")
     .append("div")
+    .attr("class", "btns")
     .append("button")
     .text("generate wdl")
     .on("click", () => {
       const str = generator.generate();
       console.log(str);
+    });
+  d3.select(".btns")
+    .append("button")
+    .text("save")
+    .on("click", () => {
+      console.log("save", generator.tasks);
+      localStorage.setItem("task", JSON.stringify(generator.tasks));
     });
 }
 

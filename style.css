@@ -5,6 +5,10 @@ body {
   margin: 0;
   padding: 0;
 }
+
+ul li {
+  list-style: none;
+}
 #app {
   padding: 20px;
 }
@@ -47,12 +51,19 @@ rect {
 }
 
 .dialog {
-  width: 200px;
-  height: 200px;
-  background: gray;
+  width: 180px;
   position: fixed;
-  left: 5%;
-  top: 45%;
+  border: 1px solid gray;
+  left: 2%;
+  top: 5%;
+}
+
+.dialog h3 {
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid;
+  background: #f5f5f5;
+  border-color: #ddd;
 }
 
 .context_menu {
@@ -65,7 +76,6 @@ rect {
 }
 
 .context_menu ul li {
-  list-style: none;
   text-align: center;
   font-size: 14px;
   padding: 5px 0;
@@ -84,4 +94,22 @@ rect {
 
 .context_menu ul li:nth-last-child(-n + 1) {
   border: none;
+}
+
+.params-ul {
+  padding: 10px;
+}
+
+.params-ul input {
+  width: 88%;
+  padding: 5px 5px;
+}
+
+.params-ul .name {
+  margin-bottom: 10px;
+  word-break: break-all;
+}
+
+path {
+  cursor: pointer;
 }

@@ -43,7 +43,7 @@ export default function () {
       .selectAll("image")
       .data(d => [d])
       .join("image")
-      .attr("xlink:href", "/wdl/wdl/node.svg")
+      .attr("xlink:href", "/node.svg")
       .attr("width", 15)
       .attr("height", 15)
       .attr("x", 2.5)
@@ -222,20 +222,37 @@ export default function () {
           .attr("fill", "#85c9d1")
           .attr("stroke", "#272643")
           .attr("stroke-width", "0.7");
-        d.target[(x, y)];
-        d.link = selection
-          .select("." + d.pathID[d.pathID.length - 1])
+        hasLinked
+          .attr("fill", "#85c9d1")
+          .attr("stroke", "#272643")
+          .attr("stroke-width", "0.7");
 
+        d.target[(x, y)];
+        const link = selection
+          .select("." + d.pathID[d.pathID.length - 1])
           .attr("d", d3.linkHorizontal())
           .lower();
         hasLinked.each(link => (link.pathID = d.pathID[d.pathID.length - 1]));
         // d.pathID = d.pathID;
         const targetInputData = hasLinked.datum();
         const targetParentData = getParentData(targetInputData.pid);
+
         dispatch.call("link", null, {
           source: d,
           target: targetParentData,
           targetInput: targetInputData
+        });
+
+        link.on("click", () => {
+          dg.data({
+            type: "link",
+            sourceNode: parentData,
+            sourceOutput: d,
+            targetNode: targetParentData,
+            targetInput: targetInputData
+          }).showup();
+          // d.link.attr("stroke", "#f5f5f5").attr("stroke-width", "0.2");
+          console.log("path click");
         });
       } else {
         selection.select("." + d.pathID[d.pathID.length - 1]).remove();

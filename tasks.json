@@ -4,10 +4,13 @@
       "id": 1998001,
       "type": "input",
       "label": "input_node",
+      "params": [],
+      "inputParams": [],
       "outputParams": [
         {
           "type": "String",
-          "value": "Input_Task_Output_Value1"
+          "label": "Input_Task_Output_Value1",
+          "value": "Input_Task_Output_Value1_value"
         }
       ]
     },
@@ -15,6 +18,7 @@
       "id": 1998002,
       "type": "output",
       "label": "output_node",
+      "params": [],
       "inputParams": [
         {
           "label": "input_param_1",
@@ -28,7 +32,8 @@
           "label": "input_param_2",
           "value": ""
         }
-      ]
+      ],
+      "outputParams": []
     },
     {
       "id": 1998003,
@@ -39,6 +44,12 @@
           "label": "out",
           "type": "String",
           "value": ""
+        }
+      ],
+      "params": [
+        {
+          "name": "cpu_number",
+          "value": 4
         }
       ],
       "outputParams": [
