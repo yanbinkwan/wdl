@@ -3,60 +3,144 @@
     {
       "id": 1998001,
       "type": "input",
-      "label": "input_node",
+      "label": "input_string",
       "params": [],
       "inputParams": [],
       "outputParams": [
         {
           "type": "String",
-          "label": "Input_Task_Output_Value1",
-          "value": "Input_Task_Output_Value1_value"
+          "label": "Input_Task_Output_Value1"
+        }
+      ]
+    },
+    {
+      "id": 1998001,
+      "type": "input",
+      "label": "input_file",
+      "params": [],
+      "inputParams": [],
+      "outputParams": [
+        {
+          "type": "File",
+          "label": "input"
         }
       ]
     },
     {
       "id": 1998002,
       "type": "output",
-      "label": "output_node",
-      "params": [],
+      "label": "output_node_${cwd}_${extensionInstallFolder:publisher.extension}",
       "inputParams": [
         {
-          "label": "input_param_1",
-          "value": ""
-        },
-        {
-          "label": "input_param_2",
-          "value": ""
-        },
-        {
-          "label": "input_param_2",
-          "value": ""
+          "type": "String",
+          "label": "output"
         }
-      ],
-      "outputParams": []
+      ]
     },
     {
-      "id": 1998003,
+      "id": 1998007,
+      "type": "scatter",
+      "label": "parallel",
+      "inputParams": [{ "label": "input" }],
+      "outputParams": [{ "label": "input" }]
+    },
+    {
+      "id": 1998004,
       "type": "task",
-      "label": "Echo_Task",
+      "label": "Greeting",
+      "wdl_file": "greeting.wdl",
+      "call_function": "wf_greeting",
       "inputParams": [
         {
-          "label": "out",
-          "type": "String",
-          "value": ""
-        }
-      ],
-      "params": [
-        {
-          "name": "cpu_number",
-          "value": 4
+          "label": "name_input"
         }
       ],
       "outputParams": [
         {
-          "label": "outFile",
-          "type": "File",
-          "value": ""
+          "label": "output_name"
+        }
+      ]
+    },
+    {
+      "id": 1998005,
+      "type": "task",
+      "label": "ReadBack",
+      "wdl_file": "read_back.wdl",
+      "call_function": "wf_read_back",
+      "inputParams": [
+        {
+          "label": "written_input"
+        }
+      ],
+      "outputParams": [
+        {
+          "label": "repeated_output"
+        }
+      ]
+    },
+    {
+      "id": 1998009,
+      "type": "task",
+      "label": "cnvtask",
+      "wdl_file": "cnvtask.wdl",
+      "call_function": "idat_to_gtc",
+      "inputParams": [
+        {
+          "label": "run_id",
+          "type": "String"
+        },
+        {
+          "label": "IDAT_File1",
+          "type": "File"
+        },
+        {
+          "label": "IDAT_File2",
+          "type": "File"
+        },
+        {
+          "label": "Ref_FilePath",
+          "type": "File"
+        }
+      ],
+      "outputParams": [
+        {
+          "label": "output_gtc",
+          "type": "File"
+        }
+      ]
+    },
+    {
+      "id": 1998010,
+      "type": "task",
+      "label": "cnvtask",
+      "wdl_file": "cnvtask.wdl",
+      "call_function": "gtc_to_vcf",
+      "inputParams": [
+        {
+          "label": "gtc_file",
+          "type": "File"
+        },
+        {
+          "label": "Ref_FilePath",
+          "type": "File"
+        },
+        {
+          "label": "filebase",
+          "type": "String"
+        }
+      ],
+      "outputParams": [
+        {
+          "label": "gtc_tsv",
+          "type": "File"
+        },
+        {
+          "label": "bcf_file",
+          "type": "File"
+        },
+        {
+          "label": "bcf_idx",
+          "type": "File"
         }
       ]
     }

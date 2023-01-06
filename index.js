@@ -23,7 +23,17 @@ function initSvg() {
     .on("click", event => {
       d3.select(".context_menu").remove();
     });
+
   return svg.node();
+}
+
+function restore() {
+  const tasks = JSON.parse(localStorage.getItem("task"));
+  if (!tasks) return;
+  tasks.forEach(task => {
+    generator.pushTask(task);
+  });
+  d3.select(".svg-box").call(TaskIns.data(generator.tasks));
 }
 
 function loadTasks() {
@@ -44,7 +54,7 @@ function loadTasks() {
 
       generator.pushTask(task);
       if (task.type === "input") {
-        generator.root.children.push({
+        generator.root.children.unshift({
           type: "input",
           task
         });
@@ -69,29 +79,44 @@ function dropzone(selection) {
 }
 
 function handleLinkEvent(params) {
-  const { source, target, targetInput } = params;
-  // source.to = targetInput;
+  const { sourceNamespace, source, target, targetInput } = params;
   targetInput.value = source;
-  generator.root.children.push({
-    type: target.type === "task" ? "call" : "output",
-    task: target,
-    source,
-    output: source.value,
-    input: targetInput.label
-  });
+
+  const hasCalled = generator.root.children.find(
+    child => child.type === "call" && child.task.id === target.id
+  );
+  console.log(hasCalled);
+
+  if (!hasCalled) {
+    generator.root.children.push({
+      type: target.type === "task" ? "call" : "output",
+      task: target,
+      source,
+      output: [
+        `${sourceNamespace ? sourceNamespace + "." : ""}${source.label}`
+      ],
+      input: [targetInput]
+    });
+  } else {
+    hasCalled.input.push(targetInput);
+    hasCalled.output.push(
+      `${sourceNamespace ? sourceNamespace + "." : ""}${source.label}`
+    );
+  }
 }
 
 function handleTaskDeleteEvent(data) {
   data.outputParams &&
     data.outputParams.forEach(output => {
-      if (output.pathID) {
-        d3.select("." + output.pathID).remove();
-      }
+      const { links = [] } = output;
+      links.forEach(link => {
+        d3.select("." + link.id).remove();
+      });
     });
   data.inputParams &&
     data.inputParams.forEach(input => {
-      if (input.pathID) {
-        d3.select("." + input.pathID).remove();
+      if (input.linkId) {
+        d3.select("." + input.linkId).remove();
       }
     });
   generator.removeTask(data.id);
@@ -100,6 +125,7 @@ function handleTaskDeleteEvent(data) {
 
 function main() {
   document.getElementById("app").appendChild(initSvg());
+  restore();
   loadTasks();
   d3.select("#app")
     .append("div")

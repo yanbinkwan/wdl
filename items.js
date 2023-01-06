@@ -14,7 +14,7 @@ export const items = () => {
           .data(tasks)
           .join("div")
           .attr("class", "items")
-          .text(d => d.label)
+          .text(d => (d.type === "task" ? d.call_function : d.label))
           .attr("draggable", true)
           .on("dragstart", ev => {
             ev.dataTransfer.dropEffect = "copy";
