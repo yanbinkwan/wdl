@@ -1,20 +1,19 @@
 import * as d3 from "d3";
 
-export const items = () => {
+export default () => {
   const dispatch = d3.dispatch("dragend-g");
   const ins = selection => {
     fetch("http://localhost:8000/task/list", { method: "POST" })
       .then(response => response.json())
       .then(json => json.result.records)
       .then(tasks => {
-        console.log("tasks", tasks);
         selection
-          .append("div")
-          .attr("class", "drag-container")
-          .selectAll("div")
+          .append("ul")
+          .attr("class", "list-group")
+          .selectAll("li")
           .data(tasks)
-          .join("div")
-          .attr("class", "items")
+          .join("li")
+          .attr("class", "list-group-item")
           .text(d => (d.type === "task" ? d.call_function : d.label))
           .attr("draggable", true)
           .on("dragstart", ev => {

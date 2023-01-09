@@ -6,6 +6,7 @@ import image from "@rollup/plugin-image";
 import dev from "rollup-plugin-dev";
 // import css from "rollup-plugin-css-only";
 import css from "rollup-plugin-import-css";
+import sass from "rollup-plugin-sass";
 import { terser } from "rollup-plugin-terser";
 import resolve from "@rollup/plugin-node-resolve";
 import sourcemaps from "rollup-plugin-sourcemaps";
@@ -42,12 +43,15 @@ export default {
   plugins: [
     babel({ babelHelpers: "bundled" }),
     css(),
+    sass({
+      output: "dist/bundle.css"
+    }),
+    image(),
     resolve(),
     html({
       title: "WDL Generator",
       template
     }),
-    image(),
     dev({
       spa: true,
       dirs: ["dist"],

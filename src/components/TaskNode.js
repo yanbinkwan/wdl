@@ -1,7 +1,7 @@
 import * as d3 from "d3";
-import { dialog } from "./dialog.js";
-import ContextMenu from "./components/ContextMenu.js";
-import node from '/node.svg"';
+import { dialog } from "../dialog.js";
+import ContextMenu from "./ContextMenu.js";
+import nodeImg from "../node.svg";
 
 export default function () {
   let data;
@@ -31,10 +31,10 @@ export default function () {
         event.preventDefault();
       });
     const rects = group
-      .selectAll("rect.container")
+      .selectAll("rect.svg-container")
       .data([null])
       .join("rect")
-      .attr("class", "container")
+      .attr("class", "svg-container")
       .attr("height", 20)
       .attr("width", 20)
       .attr("rx", 2)
@@ -45,7 +45,7 @@ export default function () {
       .selectAll("image")
       .data(d => [d])
       .join("image")
-      .attr("xlink:href", node)
+      .attr("xlink:href", nodeImg)
       .attr("width", 15)
       .attr("height", 15)
       .attr("x", 2.5)

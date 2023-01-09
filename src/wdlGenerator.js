@@ -1,4 +1,5 @@
 export default class Generator {
+  ins = null;
   root = null;
   tasks = [];
   imports = {};
@@ -6,6 +7,14 @@ export default class Generator {
 
   constructor() {
     this.root = new WorkFlow("wf_echo");
+    return null;
+  }
+
+  static create() {
+    if (!this.ins) {
+      this.ins = new Generator();
+    }
+    return this.ins;
   }
 
   pushTask(task) {
@@ -18,7 +27,6 @@ export default class Generator {
   removeTask(id) {
     const index = this.tasks.findIndex(task => task.id === id);
     this.tasks.splice(index, 1);
-    console.log(this.root.children);
     this.root.children.forEach((child, i) => {
       if (child.task.id === id) {
         this.root.children.splice(i, 1);

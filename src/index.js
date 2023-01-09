@@ -1,32 +1,9 @@
-import * as d3 from "d3";
-import { items } from "./items.js";
-import Task from "./task.js";
-import Generator from "./wdlGenerator.js";
-import "./style.css";
+import { select } from "d3";
 
-const height = 200;
-const width = 200;
-const generator = new Generator();
-const TaskIns = Task()
-  .on("link", handleLinkEvent)
-  .on("delete", handleTaskDeleteEvent);
-
-function initSvg() {
-  const svg = d3
-    .create("svg")
-    .attr("class", "svg-box")
-    .attr("viewBox", [0, 0, width, height])
-    .attr("stroke-width", 2)
-    .call(dropzone)
-    .on("contextmenu", event => {
-      event.preventDefault();
-    })
-    .on("click", event => {
-      d3.select(".context_menu").remove();
-    });
-
-  return svg.node();
-}
+import WdlCanvas from "./components/WdlCanvas.js";
+import TaskList from "./components/TaskList.js";
+import ActionButtons from "./components/ActionButtons.js";
+import "./style.sass";
 
 function restore() {
   const tasks = JSON.parse(localStorage.getItem("task"));
@@ -37,112 +14,29 @@ function restore() {
   d3.select(".svg-box").call(TaskIns.data(generator.tasks));
 }
 
-function loadTasks() {
-  d3.select("#app").call(
-    items().on("dragend-g", value => {
-      const {
-        x,
-        y,
-        dataTransfer: { task }
-      } = value;
-      const svgnode = d3.select(".svg-box").node();
-      const pt = svgnode.createSVGPoint();
-      pt.x = x;
-      pt.y = y;
-      const svgP = pt.matrixTransform(svgnode.getScreenCTM().inverse());
-      task.x = svgP.x;
-      task.y = svgP.y;
+/** MAIN FUNCTION */
+!(function () {
+  const row = document.createElement("div");
+  row.className = "row";
 
-      generator.pushTask(task);
-      if (task.type === "input") {
-        generator.root.children.unshift({
-          type: "input",
-          task
-        });
-      }
-      d3.select(".svg-box").call(TaskIns.data(generator.tasks));
-    })
-  );
-}
+  const wdlCanvasCol = document.createElement("div");
+  wdlCanvasCol.className = "col-10";
+  wdlCanvasCol.appendChild(WdlCanvas());
 
-function dropzone(selection) {
-  selection
-    .on("ondrop", ev => {
-      ev.preventDefault();
-      ev.dataTransfer.dropEffect = "move";
-      // Get the id of the target and add the moved element to the target's DOM
-      // const data = ev.dataTransfer.getData("text/plain");
-      // ev.target.appendChild(document.getElementById(data));
-    })
-    .on("dragover", ev => {
-      ev.preventDefault();
-    });
-}
+  const tasksCol = document.createElement("div");
+  tasksCol.className = "col-2";
+  select(tasksCol).call(TaskList);
 
-function handleLinkEvent(params) {
-  const { sourceNamespace, source, target, targetInput } = params;
-  targetInput.value = source;
+  row.appendChild(wdlCanvasCol);
+  row.appendChild(tasksCol);
 
-  const hasCalled = generator.root.children.find(
-    child => child.type === "call" && child.task.id === target.id
-  );
+  const svgContainer = document.createElement("div");
+  svgContainer.className = "container-fluid";
+  svgContainer.appendChild(row);
 
-  if (!hasCalled) {
-    generator.root.children.push({
-      type: target.type === "task" ? "call" : "output",
-      task: target,
-      source,
-      output: [
-        `${sourceNamespace ? sourceNamespace + "." : ""}${source.label}`
-      ],
-      input: [targetInput]
-    });
-  } else {
-    hasCalled.input.push(targetInput);
-    hasCalled.output.push(
-      `${sourceNamespace ? sourceNamespace + "." : ""}${source.label}`
-    );
-  }
-}
+  const app = document.getElementById("app");
+  app.appendChild(ActionButtons());
+  app.appendChild(svgContainer);
 
-function handleTaskDeleteEvent(data) {
-  data.outputParams &&
-    data.outputParams.forEach(output => {
-      const { links = [] } = output;
-      links.forEach(link => {
-        d3.select("." + link.id).remove();
-      });
-    });
-  data.inputParams &&
-    data.inputParams.forEach(input => {
-      if (input.linkId) {
-        d3.select("." + input.linkId).remove();
-      }
-    });
-  generator.removeTask(data.id);
-  d3.select(".svg-box").call(TaskIns.data(generator.tasks));
-}
-
-function main() {
-  document.getElementById("app").appendChild(initSvg());
-  restore();
-  loadTasks();
-  // d3.select("#app")
-  //   .append("div")
-  //   .attr("class", "btns")
-  //   .append("button")
-  //   .text("generate wdl")
-  //   .on("click", () => {
-  //     const str = generator.generate();
-  //     console.log(str);
-  //   });
-  // d3.select(".btns")
-  //   .append("button")
-  //   .text("save")
-  //   .on("click", () => {
-  //     console.log("save", generator.tasks);
-  //     localStorage.setItem("task", JSON.stringify(generator.tasks));
-  //   });
-}
-
-main();
+  // restore();
+})();
