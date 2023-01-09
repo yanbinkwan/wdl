@@ -1,7 +1,8 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.7.0/+esm";
+import * as d3 from "d3";
 import { items } from "./items.js";
 import Task from "./task.js";
 import Generator from "./wdlGenerator.js";
+import "./style.css";
 
 const height = 200;
 const width = 200;
@@ -85,7 +86,6 @@ function handleLinkEvent(params) {
   const hasCalled = generator.root.children.find(
     child => child.type === "call" && child.task.id === target.id
   );
-  console.log(hasCalled);
 
   if (!hasCalled) {
     generator.root.children.push({
@@ -127,22 +127,22 @@ function main() {
   document.getElementById("app").appendChild(initSvg());
   restore();
   loadTasks();
-  d3.select("#app")
-    .append("div")
-    .attr("class", "btns")
-    .append("button")
-    .text("generate wdl")
-    .on("click", () => {
-      const str = generator.generate();
-      console.log(str);
-    });
-  d3.select(".btns")
-    .append("button")
-    .text("save")
-    .on("click", () => {
-      console.log("save", generator.tasks);
-      localStorage.setItem("task", JSON.stringify(generator.tasks));
-    });
+  // d3.select("#app")
+  //   .append("div")
+  //   .attr("class", "btns")
+  //   .append("button")
+  //   .text("generate wdl")
+  //   .on("click", () => {
+  //     const str = generator.generate();
+  //     console.log(str);
+  //   });
+  // d3.select(".btns")
+  //   .append("button")
+  //   .text("save")
+  //   .on("click", () => {
+  //     console.log("save", generator.tasks);
+  //     localStorage.setItem("task", JSON.stringify(generator.tasks));
+  //   });
 }
 
 main();

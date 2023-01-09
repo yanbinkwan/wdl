@@ -1,12 +1,13 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.7.0/+esm";
+import * as d3 from "d3";
 
 export const items = () => {
   const dispatch = d3.dispatch("dragend-g");
   const ins = selection => {
-    fetch("./tasks.json")
+    fetch("http://localhost:8000/task/list", { method: "POST" })
       .then(response => response.json())
-      .then(json => json.tasks)
+      .then(json => json.result.records)
       .then(tasks => {
+        console.log("tasks", tasks);
         selection
           .append("div")
           .attr("class", "drag-container")

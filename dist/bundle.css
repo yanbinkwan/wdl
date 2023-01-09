@@ -53,6 +53,7 @@ rect {
   width: 180px;
   position: fixed;
   border: 1px solid gray;
+  background: white;
   left: 2%;
   top: 5%;
 }
@@ -113,6 +114,5 @@ path {
   cursor: pointer;
 }
 
-.edit_param_label{
-  
+.edit_param_label {
 }

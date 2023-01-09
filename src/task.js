@@ -1,6 +1,7 @@
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.7.0/+esm";
+import * as d3 from "d3";
 import { dialog } from "./dialog.js";
 import ContextMenu from "./components/ContextMenu.js";
+import node from '/node.svg"';
 
 export default function () {
   let data;
@@ -44,7 +45,7 @@ export default function () {
       .selectAll("image")
       .data(d => [d])
       .join("image")
-      .attr("xlink:href", "/node.svg")
+      .attr("xlink:href", node)
       .attr("width", 15)
       .attr("height", 15)
       .attr("x", 2.5)
