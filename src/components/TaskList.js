@@ -85,6 +85,10 @@ export default function (selection) {
     generator.pushTask(task);
   });
 
+  const children = JSON.parse(localStorage.getItem("children"));
+  if (!children) return;
+  generator.root.children = children;
+
   setTimeout(() => {
     select(".svg-box").call(TaskIns.data(generator.tasks));
   }, 0);

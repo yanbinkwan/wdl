@@ -3015,6 +3015,103 @@
   new Transform(1, 0, 0);
   Transform.prototype;
 
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      enumerableOnly && (symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      })), keys.push.apply(keys, symbols);
+    }
+    return keys;
+  }
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+    return target;
+  }
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
+    }
+  }
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    Object.defineProperty(Constructor, "prototype", {
+      writable: false
+    });
+    return Constructor;
+  }
+  function _defineProperty(obj, key, value) {
+    key = _toPropertyKey(key);
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+    return obj;
+  }
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  }
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+  }
+  function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+  }
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+    return arr2;
+  }
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+  function _toPrimitive(input, hint) {
+    if (typeof input !== "object" || input === null) return input;
+    var prim = input[Symbol.toPrimitive];
+    if (prim !== undefined) {
+      var res = prim.call(input, hint || "default");
+      if (typeof res !== "object") return res;
+      throw new TypeError("@@toPrimitive must return a primitive value.");
+    }
+    return (hint === "string" ? String : Number)(input);
+  }
+  function _toPropertyKey(arg) {
+    var key = _toPrimitive(arg, "string");
+    return typeof key === "symbol" ? key : String(key);
+  }
+
   var height = 200;
   var width = 200;
   function WdlCanvas () {
@@ -3024,7 +3121,39 @@
     }).on("click", function () {
       select(".context_menu").remove();
     });
+    svg.append("g").attr("class", "g-dots").selectAll("circle.dot").data(square_grid()).join("circle").attr("class", "dot").attr("cx", function (d) {
+      return d.x;
+    }).attr("cy", function (d) {
+      return d.y;
+    }).attr("r", function (d) {
+      return 0.8;
+    }).attr("fill", "#e2e1eb").lower();
     return svg.node();
+  }
+
+  // Parameters refs: https://observablehq.com/@danleesmith/grid-studies-vol-1
+  function square_grid() {
+    var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 500;
+    var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 30;
+    var go = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [0.5, 0.5];
+    var co = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [0.5, 0.5];
+    var cs = s / n;
+    var x = function x(i) {
+      return i % n * cs - cs * n * go[0] + cs * co[0];
+    };
+    var y = function y(i) {
+      return Math.floor(i / n) * cs - cs * n * go[1] + cs * co[1];
+    };
+    var grid = _toConsumableArray(Array(n * n).keys());
+    grid.forEach(function (v, i) {
+      grid[i] = {
+        i: i,
+        x: x(i),
+        y: y(i),
+        r: cs
+      };
+    });
+    return grid;
   }
   function dropzone(selection) {
     selection.on("ondrop", function (ev) {
@@ -3077,31 +3206,53 @@
     return ins;
   });
 
+  var img$1 = "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-x' viewBox='0 0 16 16'%3e %3cpath d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e";
+
   function dialog() {
     var data;
+    var types = ["String", "File", "Boolean"];
     var ins = function ins() {};
+    //         <ul class="params-ul">${
+    //   data.params &&
+    //   data.params.map(param => {
+    //     return `<li>
+    //     <p class="name">${param.name}</p>
+    //   </li>`;
+    //   })
+    // }</ul>
+
+    // <span class="edit_param_label">
+    // <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+    //   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.75 19.25L9 18.25L18.2929 8.95711C18.6834 8.56658 18.6834 7.93342 18.2929 7.54289L16.4571 5.70711C16.0666 5.31658 15.4334 5.31658 15.0429 5.70711L5.75 15L4.75 19.25Z"></path>
+    //   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.25 19.25H13.75"></path>
+    // </svg>
+    // </span>
     function paramHtml() {
-      return "\n    <h3>".concat(data.label, "</h3>\n\n    <ul class=\"params-ul\">").concat(data.params && data.params.map(function (param) {
-        return "<li>\n        <p class=\"name\">".concat(param.name, "</p>\n        <input type=\"number\" value='").concat(param.value, "'/>\n      </li>");
-      }), "</ul>\n\n    <h3>\u8F93\u5165\u53C2\u6570</h3>\n    <ul class=\"params-ul\">").concat(data.inputParams.map(function (param) {
-        return "<li>\n      <p class=\"name\">".concat(param.label, " <span class=\"edit_param_label\"><svg width=\"24\" height=\"24\" fill=\"none\" viewBox=\"0 0 24 24\">\n      <path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M4.75 19.25L9 18.25L18.2929 8.95711C18.6834 8.56658 18.6834 7.93342 18.2929 7.54289L16.4571 5.70711C16.0666 5.31658 15.4334 5.31658 15.0429 5.70711L5.75 15L4.75 19.25Z\"></path>\n      <path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M19.25 19.25H13.75\"></path>\n    </svg>\n    </span></p>\n        <input type=\"number\" id=\"").concat(param.label, "\" value='").concat(param.value && param.value.value, "'/>\n      </li>");
-      }), "</ul>\n\n    <h3>\u8F93\u51FA\u53C2\u6570</h3>\n    <ul class=\"params-ul\">").concat(data.outputParams.map(function (param) {
-        return "<li>\n        <p class=\"name\">".concat(param.label, " <span class=\"edit_param_label\"><svg width=\"24\" height=\"24\" fill=\"none\" viewBox=\"0 0 24 24\">\n        <path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M4.75 19.25L9 18.25L18.2929 8.95711C18.6834 8.56658 18.6834 7.93342 18.2929 7.54289L16.4571 5.70711C16.0666 5.31658 15.4334 5.31658 15.0429 5.70711L5.75 15L4.75 19.25Z\"></path>\n        <path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M19.25 19.25H13.75\"></path>\n      </svg>\n      </span></p>\n      <input type=\"text\" id=\"output-label-").concat(data.id, "\" value='").concat(param.label, "' \"/>\n        <input type=\"number\" id=\"").concat(data.id, "\" value='").concat(param.value, "'/>\n      </li>");
-      }), "</ul>\n  ");
+      return "\n    <div class=\"card\" style=\"width: 12rem;\">\n      <div class=\"card-body\">\n        <h3 class=\"border-bottom\">\u8282\u70B9\uFF1A".concat(data.label, "</h3> <img src=\"").concat(img$1, "\" class=\"closeBtn\"/>\n\n        ").concat(data.inputParams.length > 0 ? " <h3>\u8F93\u5165\u53C2\u6570</h3> \n          <ul class=\"params-ul border-bottom mb-1\">".concat(data.inputParams.map(function (param) {
+        return "<li >\n              <p class=\"name\">".concat(param.label, "</p>\n            </li>");
+      }).join(""), "</ul>") : "", "\n        ").concat(data.outputParams.length > 0 ? "\n          <h3>\u8F93\u51FA\u53C2\u6570</h3>\n          <ul class=\"params-ul\">".concat(data.outputParams.map(function (param) {
+        return "<li><p class=\"name\">".concat(param.label, "</p>\n            <select class=\"form-select form-select-sm\" id=\"params-type-select-").concat(param.label, "\" aria-label=\"Default select example\"\n            \">\n            ").concat(types.map(function (type) {
+          return "\n                <option value=\"".concat(type, "\" ").concat(type === param.type ? "selected" : "", ">").concat(type, "</option>\n              ");
+        }), "\n            </select>\n            </li>");
+      }).join(""), "</ul>") : "", "\n      </div>\n    </div>\n  ");
+      // <input type="text" id="output-label-${data.id}" value='${param.label}' "/>
+      // <input type="number" id="${data.id}" value='${param.value}'/>
     }
+
     function linkHtml() {
-      return "<h3>Link</h3>\n     <h4>From</h4>\n     <p>".concat(data.sourceNode.label, "</p>\n     <p>\u8F93\u51FA\u7AEF\u53E3\uFF1A").concat(data.sourceOutput.value, "</p>\n      <br/>\n     <h4>To</h4>\n     <p>").concat(data.targetNode.label, "</p>\n     <p>\u8F93\u5165\u7AEF\u53E3\uFF1A").concat(data.targetInput.label, "</p>\n    ");
+      return "\n    <div class=\"card\" style=\"width: 12rem;\">\n      <div class=\"card-body\">\n        <h3 class=\"border-bottom\">Link</h3>\n        <img src=\"".concat(img$1, "\" class=\"closeBtn\"/>\n        <h3>\u6E90: ").concat(data.sourceLabel, "</h3>\n        <ul class=\"params-ul\">\n          <li><p class=\"name\">\u8F93\u51FA\u7AEF\u53E3\uFF1A").concat(data.sourceOutput, "</p></li>\n        </ul>\n        <h3>\u76EE\u6807\uFF1A").concat(data.targetLabel, "</h3>\n        <ul class=\"params-ul\">\n          <li><p class=\"name\">\u8F93\u5165\u7AEF\u53E3\uFF1A").concat(data.targetInput, "</p></li>\n        </ul>\n      </div>\n    </div>");
     }
     ins.showup = function () {
+      var _this = this;
       select(".dialog").remove();
-      select("#app").append("div").attr("class", "dialog").html(data.type === "link" ? linkHtml() : paramHtml());
-      data.inputParams.forEach(function (p) {
+      select(".svg-container").append("div").attr("class", "dialog").html(data.type === "link" ? linkHtml() : paramHtml());
+      data.inputParams && data.inputParams.forEach(function (p) {
         select("#".concat(p.label)).on("input", function (el) {
           var val = el.target.value;
           p.value = val;
         });
       });
-      data.outputParams.forEach(function (p) {
+      data.outputParams && data.outputParams.forEach(function (p) {
         select("#".concat(p.label)).on("input", function (el) {
           var val = el.target.value;
           p.value = val;
@@ -3110,6 +3261,14 @@
           var val = el.target.value;
           p.label = val;
         });
+        select("#params-type-select-" + p.label).on("change", function (event) {
+          var type = event.target.value;
+          p.type = type;
+          console.log(p);
+        });
+      });
+      select(".closeBtn").on("click", function () {
+        _this.dismiss();
       });
     };
     ins.data = function (_) {
@@ -3161,7 +3320,7 @@
     var dg = dialog();
     var dispatch$1 = dispatch("link", "delete");
     var ins = function ins(selection) {
-      var group = selection.selectAll("g").data(data).join("g").attr("class", "node-g").attr("transform", function (d) {
+      var group = selection.selectAll("g.node-g").data(data).join("g").attr("class", "node-g").attr("transform", function (d) {
         return "translate(".concat(d.x, ", ").concat(d.y, ")");
       }).call(moveNode());
       group.selectAll("text").data(function (d) {
@@ -3233,7 +3392,11 @@
       }).flat();
       selection.selectAll("path").data(linksData).join("path").attr("stroke", "#85c9d1").attr("fill", "none").attr("class", function (d) {
         return d.id;
-      }).attr("d", linkHorizontal()).lower();
+      }).attr("d", linkHorizontal()).on("click", function (d, d1) {
+        dg.data(_objectSpread2({
+          type: "link"
+        }, d1.data)).showup();
+      }).lower();
     };
     ins.data = function (_) {
       return _ ? (data = _) && ins : data;
@@ -3308,30 +3471,37 @@
           d.linked = true;
           select(this).attr("fill", "#85c9d1").attr("stroke", "#272643").attr("stroke-width", "0.7");
           hasLinked.attr("fill", "#85c9d1").attr("stroke", "#272643").attr("stroke-width", "0.7");
-          var link = selection.select("." + linkInfo.id).attr("d", linkHorizontal()).lower();
           hasLinked.each(function (link) {
             link.linkId = linkInfo.id;
             link.linked = true;
           });
           var targetInputData = hasLinked.datum();
           var targetParentData = getParentData(targetInputData.pid);
-          console.log(parentData);
+          selection.select("." + linkInfo.id).attr("d", linkHorizontal()).lower().each(function (d) {
+            d.data = {
+              type: "link",
+              sourceLabel: parentData.label,
+              sourceOutput: d.value,
+              targetLabel: targetParentData.label,
+              targetInput: targetInputData.label
+            };
+          });
           dispatch$1.call("link", null, {
             sourceNamespace: parentData.type !== "input" ? parentData.call_function : null,
             source: d,
             target: targetParentData,
             targetInput: targetInputData
           });
-          link.on("click", function () {
-            dg.data({
-              type: "link",
-              sourceNode: parentData,
-              sourceOutput: d,
-              targetNode: targetParentData,
-              targetInput: targetInputData
-            }).showup();
-            // d.link.attr("stroke", "#f5f5f5").attr("stroke-width", "0.2");
-          });
+
+          // link.on("click", () => {
+          // dg.data({
+          //   type: "link",
+          //   sourceNode: parentData,
+          //   sourceOutput: d,
+          //   targetNode: targetParentData,
+          //   targetInput: targetInputData
+          // }).showup();
+          // });
         } else {
           selection.select("." + linkInfo.id).remove();
         }
@@ -3348,57 +3518,6 @@
       return value === dispatch$1 ? ins : value;
     };
     return ins;
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-  function _defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
-    }
-  }
-  function _createClass(Constructor, protoProps, staticProps) {
-    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) _defineProperties(Constructor, staticProps);
-    Object.defineProperty(Constructor, "prototype", {
-      writable: false
-    });
-    return Constructor;
-  }
-  function _defineProperty(obj, key, value) {
-    key = _toPropertyKey(key);
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-    return obj;
-  }
-  function _toPrimitive(input, hint) {
-    if (typeof input !== "object" || input === null) return input;
-    var prim = input[Symbol.toPrimitive];
-    if (prim !== undefined) {
-      var res = prim.call(input, hint || "default");
-      if (typeof res !== "object") return res;
-      throw new TypeError("@@toPrimitive must return a primitive value.");
-    }
-    return (hint === "string" ? String : Number)(input);
-  }
-  function _toPropertyKey(arg) {
-    var key = _toPrimitive(arg, "string");
-    return typeof key === "symbol" ? key : String(key);
   }
 
   var Generator = /*#__PURE__*/function () {
@@ -3553,6 +3672,9 @@
     tasks.forEach(function (task) {
       generator.pushTask(task);
     });
+    var children = JSON.parse(localStorage.getItem("children"));
+    if (!children) return;
+    generator.root.children = children;
     setTimeout(function () {
       select(".svg-box").call(TaskIns.data(generator.tasks));
     }, 0);
@@ -3561,19 +3683,20 @@
   function ActionButtons () {
     var generator = Generator.create();
     var container = document.createElement("div");
-    container.className = "container-fluid";
+    container.className = "container-fluid action-buttons";
     var row = document.createElement("div");
     row.className = "row";
     container.appendChild(row);
     var col = document.createElement("div");
     col.className = "col";
     row.appendChild(col);
-    select(col).append("button").attr("class", "btn btn-primary btn-sm").attr("type", "button").text("生成代码").on("click", function () {
+    select(col).append("button").attr("class", "btn btn-outline-primary btn-sm ").attr("type", "button").text("生成代码").on("click", function () {
       var str = generator.generate();
       console.log(str);
     });
-    select(col).append("button").attr("class", "btn btn-primary btn-sm").style("margin", "10px").attr("type", "button").text("保存状态").on("click", function () {
+    select(col).append("button").attr("class", "btn btn-outline-primary btn-sm").style("margin", "10px").attr("type", "button").text("保存状态").on("click", function () {
       localStorage.setItem("task", JSON.stringify(generator.tasks));
+      localStorage.setItem("children", JSON.stringify(generator.root.children));
     });
     return container;
   }
@@ -3591,13 +3714,11 @@
     row.appendChild(wdlCanvasCol);
     row.appendChild(tasksCol);
     var svgContainer = document.createElement("div");
-    svgContainer.className = "container-fluid";
+    svgContainer.className = "container-fluid svg-container";
     svgContainer.appendChild(row);
     var app = document.getElementById("app");
-    app.appendChild(ActionButtons());
+    svgContainer.appendChild(ActionButtons());
     app.appendChild(svgContainer);
-
-    // restore();
   }();
 
 })();

@@ -4,7 +4,7 @@ import Generator from "../wdlGenerator";
 export default function () {
   const generator = Generator.create();
   const container = document.createElement("div");
-  container.className = "container-fluid";
+  container.className = "container-fluid action-buttons";
   const row = document.createElement("div");
   row.className = "row";
   container.appendChild(row);
@@ -13,7 +13,7 @@ export default function () {
   row.appendChild(col);
   select(col)
     .append("button")
-    .attr("class", "btn btn-primary btn-sm")
+    .attr("class", "btn btn-outline-primary btn-sm ")
     .attr("type", "button")
     .text("生成代码")
     .on("click", () => {
@@ -23,12 +23,13 @@ export default function () {
 
   select(col)
     .append("button")
-    .attr("class", "btn btn-primary btn-sm")
+    .attr("class", "btn btn-outline-primary btn-sm")
     .style("margin", "10px")
     .attr("type", "button")
     .text("保存状态")
     .on("click", () => {
       localStorage.setItem("task", JSON.stringify(generator.tasks));
+      localStorage.setItem("children", JSON.stringify(generator.root.children));
     });
 
   return container;

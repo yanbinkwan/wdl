@@ -1,19 +1,23 @@
 @import "~bootstrap/scss/bootstrap"
 
 body 
-  font-family: sans-serif
+  font-family: Helvetica, "Trebuchet MS", Verdana, sans-serif
 
 *
   margin: 0
   padding: 0
 
-
 ul li 
   list-style: none
 
-
 #app 
   padding: 20px
+  position: relative
+
+.action-buttons 
+  position: absolute
+  left: 80px
+  top: 20px
 
 .svg-box 
   width: 100%
@@ -31,26 +35,24 @@ ul li
 .list-group-item
    cursor: grab
 
-rect 
-  cursor: -webkit-grab
-
-
+/* Params dialog styles*/
 .dialog 
-  width: 180px
-  position: fixed
-  border: 1px solid gray
-  background: white
-  left: 2%
-  top: 5%
-
-
-.dialog h3 
-  font-size: 16px
-  padding: 10px
-  border: 1px solid
-  background: #f5f5f5
-  border-color: #ddd
-
+  position: absolute
+  left: 5%
+  top: 15%
+  h3 
+    font-size: 14px
+    font-weight: bold
+  .params-ul
+    margin: 0
+    padding: 0
+    .name
+      font-size: 12px
+  .closeBtn
+    position: absolute
+    top: 5%
+    right: 5%
+    cursor: pointer
 
 .context_menu 
   position: fixed
@@ -77,21 +79,14 @@ rect
       &::nth-last-child(-n + 1) 
         border: none
 
-.params-ul 
-  padding: 10px
-
-
-.params-ul input 
-  width: 88%
-  padding: 5px 5px
-
-
 .params-ul .name 
   margin-bottom: 10px
   word-break: break-all
 
-
 path 
   cursor: pointer
+rect 
+  cursor: -webkit-grab
+
 
 

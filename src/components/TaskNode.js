@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { dialog } from "../dialog.js";
+import { dialog } from "./ParamsDialog.js";
 import ContextMenu from "./ContextMenu.js";
 import nodeImg from "../node.svg";
 
@@ -11,7 +11,7 @@ export default function () {
 
   const ins = selection => {
     const group = selection
-      .selectAll("g")
+      .selectAll("g.node-g")
       .data(data)
       .join("g")
       .attr("class", "node-g")
@@ -126,6 +126,12 @@ export default function () {
       .attr("fill", "none")
       .attr("class", d => d.id)
       .attr("d", d3.linkHorizontal())
+      .on("click", (d, d1) => {
+        dg.data({
+          type: "link",
+          ...d1.data
+        }).showup();
+      })
       .lower();
   };
 
@@ -240,17 +246,26 @@ export default function () {
           .attr("stroke", "#272643")
           .attr("stroke-width", "0.7");
 
-        const link = selection
-          .select("." + linkInfo.id)
-          .attr("d", d3.linkHorizontal())
-          .lower();
         hasLinked.each(link => {
           link.linkId = linkInfo.id;
           link.linked = true;
         });
         const targetInputData = hasLinked.datum();
         const targetParentData = getParentData(targetInputData.pid);
-        console.log(parentData);
+
+        const link = selection
+          .select("." + linkInfo.id)
+          .attr("d", d3.linkHorizontal())
+          .lower()
+          .each(d => {
+            d.data = {
+              type: "link",
+              sourceLabel: parentData.label,
+              sourceOutput: d.value,
+              targetLabel: targetParentData.label,
+              targetInput: targetInputData.label
+            };
+          });
         dispatch.call("link", null, {
           sourceNamespace:
             parentData.type !== "input" ? parentData.call_function : null,
@@ -259,16 +274,15 @@ export default function () {
           targetInput: targetInputData
         });
 
-        link.on("click", () => {
-          dg.data({
-            type: "link",
-            sourceNode: parentData,
-            sourceOutput: d,
-            targetNode: targetParentData,
-            targetInput: targetInputData
-          }).showup();
-          // d.link.attr("stroke", "#f5f5f5").attr("stroke-width", "0.2");
-        });
+        // link.on("click", () => {
+        // dg.data({
+        //   type: "link",
+        //   sourceNode: parentData,
+        //   sourceOutput: d,
+        //   targetNode: targetParentData,
+        //   targetInput: targetInputData
+        // }).showup();
+        // });
       } else {
         selection.select("." + linkInfo.id).remove();
       }
