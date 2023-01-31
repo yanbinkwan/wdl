@@ -34,7 +34,7 @@ export default function () {
 }
 
 // Parameters refs: https://observablehq.com/@danleesmith/grid-studies-vol-1
-function square_grid(s = 500, n = 30, go = [0.5, 0.5], co = [0.5, 0.5]) {
+function square_grid(s = 600, n = 80, go = [0.5, 0.5], co = [0.5, 0.5]) {
   const cs = s / n;
   const x = i => (i % n) * cs - cs * n * go[0] + cs * co[0];
   const y = i => Math.floor(i / n) * cs - cs * n * go[1] + cs * co[1];
@@ -48,7 +48,6 @@ function square_grid(s = 500, n = 30, go = [0.5, 0.5], co = [0.5, 0.5]) {
 function dropzone(selection) {
   selection
     .on("ondrop", ev => {
-      console.log("Drop");
       ev.preventDefault();
       ev.dataTransfer.dropEffect = "move";
       // Get the id of the target and add the moved element to the target's DOM

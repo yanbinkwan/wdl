@@ -1,7 +1,7 @@
 {
-  "name": "wdl",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@yanbinkwan/wdl",
+  "version": "1.0.1",
+  "description": "wdl generator lib",
   "main": "bundle.js",
   "type": "module",
   "scripts": {
@@ -12,8 +12,14 @@
     "type": "git",
     "url": "git+https://github.com/yanbinkwan/wdl.git"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "keywords": [],
-  "author": "",
+  "exports": {
+    "default": "./dist/bundle.js"
+  },
+  "author": "yanbinkwan",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/yanbinkwan/wdl/issues"

@@ -37,7 +37,8 @@ export default {
   output: {
     sourcemap: true,
     file: "dist/bundle.js",
-    format: "iife",
+    format: "esm",
+    exports: "named",
     assetFileNames: "assets/[name]-[hash][extname]"
   },
   plugins: [

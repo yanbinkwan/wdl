@@ -13,7 +13,10 @@ export default function () {
   row.appendChild(col);
   select(col)
     .append("button")
-    .attr("class", "btn btn-outline-primary btn-sm ")
+    .attr("class", "btn btn btn-primary")
+    .attr("data-bs-toggle", "popover")
+    .attr("data-bs-title", "popover")
+    .attr("data-bs-content", "popover")
     .attr("type", "button")
     .text("生成代码")
     .on("click", () => {
@@ -23,7 +26,7 @@ export default function () {
 
   select(col)
     .append("button")
-    .attr("class", "btn btn-outline-primary btn-sm")
+    .attr("class", "btn btn btn-primary")
     .style("margin", "10px")
     .attr("type", "button")
     .text("保存状态")

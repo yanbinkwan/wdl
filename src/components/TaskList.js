@@ -3,7 +3,7 @@ import TaskNode from "./TaskNode";
 import Generator from "../wdlGenerator";
 import { select } from "d3";
 
-export default function (selection) {
+export default function (selection, tasksData) {
   const generator = Generator.create();
   const dragEventHandler = value => {
     const {
@@ -77,7 +77,7 @@ export default function (selection) {
     .on("link", handleLinkEvent)
     .on("delete", handleTaskDeleteEvent);
 
-  selection.call(TaskItem().on("dragend-g", dragEventHandler));
+  selection.call(TaskItem().data(tasksData).on("dragend-g", dragEventHandler));
 
   const tasks = JSON.parse(localStorage.getItem("task"));
   if (!tasks) return;

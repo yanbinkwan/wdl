@@ -9,8 +9,23 @@
 </head>
 
 <body>
-  <div id="app"></div>
-  <script src="/bundle.js"></script>
+  <div id="app-wdl"></div>
+  <!-- <script src="/bundle.js"></script> -->
 </body>
+<script type="module">
+  import { ins } from '/bundle.js'
+  ins.init();
+
+  fetch("http://localhost:8000/task/list", { method: "POST" })
+    .then(response => response.json())
+    .then(json => json.result.records)
+    .then(tasks => {
+      ins.setTaskList(tasks);
+    })
+
+  setTimeout(function () {
+    console.log(ins.getCode(), 'clode...');
+  }, 10000)
+</script>
 
 </html>

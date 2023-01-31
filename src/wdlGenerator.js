@@ -74,6 +74,7 @@ ${imports}
 workflow ${this.root.label} {\n${s}\n}`;
 
     console.log(str);
+    return str;
   }
 }
 
