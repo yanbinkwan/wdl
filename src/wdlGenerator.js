@@ -18,8 +18,8 @@ export default class Generator {
   }
 
   pushTask(task) {
-    if (task.type === "task") {
-      this.imports[task.label] = task.wdl_file;
+    if (task.type === 0) {
+      this.imports[task.toolLabel] = task.wdl;
     }
     this.tasks.push(task);
   }
@@ -34,22 +34,22 @@ export default class Generator {
     });
   }
 
-  generate() {
+  generate(code) {
     let str = "";
     let s = "";
     this.root.children.forEach(child => {
       const { type } = child;
       switch (type) {
         case "call":
-          s += ` \tcall ${child.task.label}.${
-            child.task.call_function
+          s += ` \tcall ${child.task.toolLabel}.${
+            child.task.callFunction
           } { input: ${child.input
             .map((i, index) => `${i.label}=${child.output[index]}`)
             .join(",")} } \n`;
           break;
         case "output":
           s += ` \toutput {
-            ${child.input.type} ${child.input.label}=${child.output} 
+            ${child.input[0].type} ${child.input[0].label}=${child.output} 
         }\n`;
           break;
         case "input":
@@ -71,9 +71,7 @@ export default class Generator {
 
     str = `
 ${imports}
-workflow ${this.root.label} {\n${s}\n}`;
-
-    console.log(str);
+workflow ${code} {\n${s}\n}`;
     return str;
   }
 }

@@ -1,7 +1,7 @@
-import { select, create } from "d3";
+import { select, create, zoom } from "d3";
 
-const height = 200;
-const width = 200;
+const height = 280;
+const width = 280;
 
 export default function () {
   const svg = create("svg")
@@ -17,7 +17,24 @@ export default function () {
       select(".context_menu").remove();
     });
 
-  svg
+  const view = svg
+    .append("g")
+    .attr("class", "view")
+    .attr("x", 0.5)
+    .attr("y", 0.5)
+    .attr("width", width - 1)
+    .attr("height", height - 1);
+  const z = zoom()
+    .filter(event => {
+      event.preventDefault();
+      return (!event.ctrlKey || event.type === "wheel") && !event.button;
+    })
+    .on("zoom", ({ transform }) => {
+      console.log(transform);
+      view.attr("transform", transform);
+    });
+  svg.call(z);
+  view
     .append("g")
     .attr("class", "g-dots")
     .selectAll("circle.dot")
@@ -34,7 +51,7 @@ export default function () {
 }
 
 // Parameters refs: https://observablehq.com/@danleesmith/grid-studies-vol-1
-function square_grid(s = 600, n = 80, go = [0.5, 0.5], co = [0.5, 0.5]) {
+function square_grid(s = 1900, n = 180, go = [0.5, 0.5], co = [0.5, 0.5]) {
   const cs = s / n;
   const x = i => (i % n) * cs - cs * n * go[0] + cs * co[0];
   const y = i => Math.floor(i / n) * cs - cs * n * go[1] + cs * co[1];

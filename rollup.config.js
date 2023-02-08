@@ -4,9 +4,7 @@ import path from "path";
 import { readFileSync } from "node:fs";
 import image from "@rollup/plugin-image";
 import dev from "rollup-plugin-dev";
-// import css from "rollup-plugin-css-only";
 import css from "rollup-plugin-import-css";
-import sass from "rollup-plugin-sass";
 import { terser } from "rollup-plugin-terser";
 import resolve from "@rollup/plugin-node-resolve";
 import sourcemaps from "rollup-plugin-sourcemaps";
@@ -37,14 +35,13 @@ export default {
   output: {
     sourcemap: true,
     file: "dist/bundle.js",
-    format: "esm",
+    format: "iife",
     exports: "named",
     assetFileNames: "assets/[name]-[hash][extname]"
   },
   plugins: [
     babel({ babelHelpers: "bundled" }),
-    css(),
-    sass({
+    css({
       output: "dist/bundle.css"
     }),
     image(),

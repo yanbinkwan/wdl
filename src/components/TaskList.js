@@ -3,7 +3,7 @@ import TaskNode from "./TaskNode";
 import Generator from "../wdlGenerator";
 import { select } from "d3";
 
-export default function (selection, tasksData) {
+export default function (selection, tasksData, savedTasks) {
   const generator = Generator.create();
   const dragEventHandler = value => {
     const {
@@ -22,7 +22,7 @@ export default function (selection, tasksData) {
     task.y = svgP.y;
 
     generator.pushTask(task);
-    if (task.type === "input") {
+    if (task.type === 98) {
       generator.root.children.unshift({
         type: "input",
         task
@@ -35,12 +35,12 @@ export default function (selection, tasksData) {
     targetInput.value = source;
 
     const hasCalled = generator.root.children.find(
-      child => child.type === "call" && child.task.id === target.id
+      child => child.type === "call" && child.task.toolId === target.toolId
     );
 
     if (!hasCalled) {
       generator.root.children.push({
-        type: target.type === "task" ? "call" : "output",
+        type: target.type === 0 ? "call" : "output",
         task: target,
         source,
         output: [
@@ -73,23 +73,24 @@ export default function (selection, tasksData) {
     select(".svg-box").call(TaskIns.data(generator.tasks));
   };
 
+  const handleUpdate = () => {
+    select(".view").call(TaskIns.data(generator.tasks));
+  };
+
   const TaskIns = TaskNode()
     .on("link", handleLinkEvent)
-    .on("delete", handleTaskDeleteEvent);
+    .on("delete", handleTaskDeleteEvent)
+    .on("update", handleUpdate);
 
   selection.call(TaskItem().data(tasksData).on("dragend-g", dragEventHandler));
 
-  const tasks = JSON.parse(localStorage.getItem("task"));
-  if (!tasks) return;
-  tasks.forEach(task => {
-    generator.pushTask(task);
-  });
-
-  const children = JSON.parse(localStorage.getItem("children"));
-  if (!children) return;
-  generator.root.children = children;
-
-  setTimeout(() => {
-    select(".svg-box").call(TaskIns.data(generator.tasks));
-  }, 0);
+  if (savedTasks) {
+    savedTasks.tasks.forEach(task => {
+      generator.pushTask(task);
+    });
+    generator.root.children = savedTasks.children;
+    setTimeout(() => {
+      select(".view").call(TaskIns.data(generator.tasks));
+    }, 0);
+  }
 }

@@ -9,10 +9,11 @@ export default function () {
   const panelHeight = 40;
   const streamSize = 4;
 
-  const dispatch = d3.dispatch("link", "delete");
+  const dispatch = d3.dispatch("link", "delete", "update");
 
   const ins = selection => {
     const container = selection
+      .select(".view")
       .selectAll("g.container")
       .data(data)
       .join("g")
@@ -20,7 +21,9 @@ export default function () {
       .attr("transform", d => `translate(${d.x}, ${d.y})`)
       .call(moveNode(selection));
     container
-      .append("rect")
+      .selectAll("rect")
+      .data(d => [d])
+      .join("rect")
       .classed("panel", true)
       .attr("height", panelHeight)
       .attr("width", panelWidth)
@@ -30,7 +33,9 @@ export default function () {
       .attr("stroke-width", 0.5)
       .attr("fill", "#313147")
       .on("click", (d, d1) => {
-        dg.data(d1).showup();
+        dg.data(d1).showup(function () {
+          dispatch.call("update");
+        });
       })
       .on("contextmenu", function (event, d) {
         event.preventDefault();
@@ -46,7 +51,18 @@ export default function () {
       });
     container
       .append("text")
-      .text(d => d.type.toUpperCase())
+      .text(d => {
+        switch (d.type) {
+          case 0:
+            return "TASK";
+          case 98:
+            return "INPUT";
+          case 99:
+            return "OUTPUT";
+          default:
+            return "UNKNOW";
+        }
+      })
       .attr("text-anchor", "end")
       .attr("dx", panelWidth - 5)
       .attr("y", 8)
@@ -54,7 +70,7 @@ export default function () {
       .attr("fill", "#e9ecff");
     container
       .append("text")
-      .text(d => d.label)
+      .text(d => d.name)
       .attr("text-anchor", "start")
       .attr("y", 8)
       .attr("dx", 5)
@@ -63,7 +79,7 @@ export default function () {
       .style("font-weight", "bold");
     container
       .append("text")
-      .text(d => d.call_function)
+      .text(d => d.callFunction)
       .attr("y", 16)
       .attr("dx", 5)
       .attr("font-size", "4")
@@ -236,7 +252,6 @@ export default function () {
           const parentD = getParentData(inputD.pid);
           const xp = parentD.x + inputD.x + 2 - x;
           const yp = parentD.y + inputD.y + 2 - y;
-          console.log(yp, xp);
           return xp >= 0 && xp <= 4 && yp >= 0 && yp <= 4 && !inputD.linked;
         });
 
@@ -275,7 +290,7 @@ export default function () {
           });
         dispatch.call("link", null, {
           sourceNamespace:
-            parentData.type !== "input" ? parentData.call_function : null,
+            parentData.type !== 98 ? parentData.callFunction : null,
           source: d,
           target: targetParentData,
           targetInput: targetInputData

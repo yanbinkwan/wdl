@@ -13,10 +13,7 @@ export default function () {
   row.appendChild(col);
   select(col)
     .append("button")
-    .attr("class", "btn btn btn-primary")
-    .attr("data-bs-toggle", "popover")
-    .attr("data-bs-title", "popover")
-    .attr("data-bs-content", "popover")
+    .attr("class", "pure-button")
     .attr("type", "button")
     .text("生成代码")
     .on("click", () => {

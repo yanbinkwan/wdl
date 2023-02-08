@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import x from "bootstrap-icons/icons/x.svg";
+
 export function dialog() {
   let data;
   const types = ["String", "File", "Boolean"];
@@ -23,10 +23,7 @@ export function dialog() {
     return `
     <div class="card" style="width: 12rem;">
       <div class="card-body">
-        <h3 class="border-bottom">节点：${
-          data.label
-        }</h3> <img src="${x}" class="closeBtn"/>
-
+        <h3 class="border-bottom">节点：${data.name}</h3>
         ${
           data.inputParams.length > 0
             ? ` <h3>输入参数</h3> 
@@ -42,22 +39,25 @@ export function dialog() {
         ${
           data.outputParams.length > 0
             ? `
-          <h3>输出参数</h3>
+          <h3>输出参数</h3> <button class='pure-button add-button'>+</button>
           <ul class="params-ul">${data.outputParams
             .map(
-              param => `<li><p class="name">${param.label}</p>
-            <select class="form-select form-select-sm" id="params-type-select-${
-              param.label
-            }" aria-label="Default select example"
-            ">
-            ${types.map(
-              type => `
-                <option value="${type}" ${
-                type === param.type ? "selected" : ""
-              }>${type}</option>
-              `
-            )}
-            </select>
+              param => `<li>
+              <input type="text" id="output-label-${param.label}" value="${
+                param.label
+              }"/>
+              <select id="params-type-select-${
+                param.label
+              }" aria-label="Default select example"
+              ">
+                ${types.map(
+                  type => `
+                    <option value="${type}" ${
+                    type === param.type ? "selected" : ""
+                  }>${type}</option>
+                  `
+                )}
+                </select>
             </li>`
             )
             .join("")}</ul>`
@@ -75,7 +75,6 @@ export function dialog() {
     <div class="card" style="width: 12rem;">
       <div class="card-body">
         <h3 class="border-bottom">Link</h3>
-        <img src="${x}" class="closeBtn"/>
         <h3>源: ${data.sourceLabel}</h3>
         <ul class="params-ul">
           <li><p class="name">输出端口：${data.sourceOutput}</p></li>
@@ -88,8 +87,10 @@ export function dialog() {
     </div>`;
   }
 
-  ins.showup = function () {
+  ins.showup = function (callback) {
+    console.log("callback", callback);
     d3.select(".dialog").remove();
+    ins.callback = callback;
     d3.select(".svg-container")
       .append("div")
       .attr("class", "dialog")
@@ -110,7 +111,7 @@ export function dialog() {
           p.value = val;
         });
 
-        d3.select(`#output-label-${data.id}`).on("input", el => {
+        d3.select(`#output-label-${p.label}`).on("input", el => {
           const val = el.target.value;
           p.label = val;
         });
@@ -118,12 +119,20 @@ export function dialog() {
         d3.select("#params-type-select-" + p.label).on("change", event => {
           const type = event.target.value;
           p.type = type;
-          console.log(p);
         });
       });
 
     d3.select(".closeBtn").on("click", () => {
       this.dismiss();
+    });
+
+    d3.select(".add-button").on("click", () => {
+      data.outputParams.push({
+        ...data.outputParams[0],
+        label: "label-j" + Math.round(Math.random() * 100)
+      });
+      ins.callback();
+      ins.showup(ins.callback);
     });
   };
 

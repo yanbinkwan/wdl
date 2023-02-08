@@ -10,22 +10,17 @@
 
 <body>
   <div id="app-wdl"></div>
-  <!-- ${scripts} -->
+  ${scripts}
 </body>
-<script type="module">
-  import { ins } from '/bundle.js'
-  ins.init();
+<script>
+  wdl.init();
 
   fetch("http://localhost:8000/task/list", { method: "POST" })
     .then(response => response.json())
     .then(json => json.result.records)
     .then(tasks => {
-      ins.setTaskList(tasks);
+      wdl.setTaskList(tasks);
     })
-
-  setTimeout(function () {
-    console.log(ins.getCode(), 'clode...');
-  }, 10000)
 </script>
 
 </html>
