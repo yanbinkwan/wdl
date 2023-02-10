@@ -19,7 +19,7 @@ export default class Generator {
 
   pushTask(task) {
     if (task.type === 0) {
-      this.imports[task.toolLabel] = task.wdl;
+      this.imports[task.toolLabel] = task.wdlPath;
     }
     this.tasks.push(task);
   }

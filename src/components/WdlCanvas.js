@@ -1,6 +1,6 @@
 import { select, create, zoom } from "d3";
 
-const height = 280;
+const height = 120;
 const width = 280;
 
 export default function () {
@@ -16,25 +16,7 @@ export default function () {
     .on("click", () => {
       select(".context_menu").remove();
     });
-
-  const view = svg
-    .append("g")
-    .attr("class", "view")
-    .attr("x", 0.5)
-    .attr("y", 0.5)
-    .attr("width", width - 1)
-    .attr("height", height - 1);
-  const z = zoom()
-    .filter(event => {
-      event.preventDefault();
-      return (!event.ctrlKey || event.type === "wheel") && !event.button;
-    })
-    .on("zoom", ({ transform }) => {
-      console.log(transform);
-      view.attr("transform", transform);
-    });
-  svg.call(z);
-  view
+  svg
     .append("g")
     .attr("class", "g-dots")
     .selectAll("circle.dot")
@@ -43,15 +25,36 @@ export default function () {
     .attr("class", "dot")
     .attr("cx", d => d.x)
     .attr("cy", d => d.y)
-    .attr("r", d => 0.8)
+    .attr("r", d => 0.2)
     .attr("fill", "#e2e1eb")
     .lower();
+
+  const view = svg
+    .append("g")
+    .attr("class", "view")
+    .attr("width", width)
+    .attr("height", height);
+
+  const z = zoom()
+    .translateExtent([
+      [0, 0],
+      [width + 100, height + 100]
+    ])
+    .scaleExtent([1, 40])
+    .filter(event => {
+      event.preventDefault();
+      return (!event.ctrlKey || event.type === "wheel") && !event.button;
+    })
+    .on("zoom", ({ transform }) => {
+      view.attr("transform", transform);
+    });
+  svg.call(z);
 
   return svg.node();
 }
 
 // Parameters refs: https://observablehq.com/@danleesmith/grid-studies-vol-1
-function square_grid(s = 1900, n = 180, go = [0.5, 0.5], co = [0.5, 0.5]) {
+function square_grid(s = 480, n = 100, go = [0.5, 0.5], co = [0.5, 0.5]) {
   const cs = s / n;
   const x = i => (i % n) * cs - cs * n * go[0] + cs * co[0];
   const y = i => Math.floor(i / n) * cs - cs * n * go[1] + cs * co[1];

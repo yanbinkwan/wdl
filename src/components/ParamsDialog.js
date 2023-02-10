@@ -4,42 +4,36 @@ export function dialog() {
   let data;
   const types = ["String", "File", "Boolean"];
   const ins = function () {};
-  //         <ul class="params-ul">${
-  //   data.params &&
-  //   data.params.map(param => {
-  //     return `<li>
-  //     <p class="name">${param.name}</p>
-  //   </li>`;
-  //   })
-  // }</ul>
 
-  // <span class="edit_param_label">
-  // <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-  //   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.75 19.25L9 18.25L18.2929 8.95711C18.6834 8.56658 18.6834 7.93342 18.2929 7.54289L16.4571 5.70711C16.0666 5.31658 15.4334 5.31658 15.0429 5.70711L5.75 15L4.75 19.25Z"></path>
-  //   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.25 19.25H13.75"></path>
-  // </svg>
-  // </span>
   function paramHtml() {
     return `
-    <div class="card" style="width: 12rem;">
-      <div class="card-body">
-        <h3 class="border-bottom">节点：${data.name}</h3>
+    <div class="body">
+        <h3>${data.name}</h3>
         ${
           data.inputParams.length > 0
-            ? ` <h3>输入参数</h3> 
-          <ul class="params-ul border-bottom mb-1">${data.inputParams
-            .map(
-              param => `<li >
-              <p class="name">${param.label}</p>
-            </li>`
-            )
-            .join("")}</ul>`
+            ? `
+            <div style="display: flex;justify-content: space-between;border-top: 1px solid #676785;">
+              <h4>输入参数</h4> 
+              <div class="plus-sign add-button"></div>
+            </div>
+
+            <ul class="params-ul">
+              ${data.inputParams
+                .map(
+                  param => `<li >
+                  <p class="name">${param.label}</p>
+                </li>`
+                )
+                .join("")}</ul>`
             : ""
         }
         ${
           data.outputParams.length > 0
             ? `
-          <h3>输出参数</h3> <button class='pure-button add-button'>+</button>
+            <div style="display: flex;justify-content: space-between;border-top: 1px solid #676785;">
+              <h4>输出参数</h4> 
+              <div class="plus-sign add-button"></div>
+            </div>
           <ul class="params-ul">${data.outputParams
             .map(
               param => `<li>
@@ -63,11 +57,10 @@ export function dialog() {
             .join("")}</ul>`
             : ""
         }
-      </div>
+
+        <button class=" button-success button-small pure-button close-button ">关闭</button>
     </div>
   `;
-    // <input type="text" id="output-label-${data.id}" value='${param.label}' "/>
-    // <input type="number" id="${data.id}" value='${param.value}'/>
   }
 
   function linkHtml() {
@@ -88,10 +81,10 @@ export function dialog() {
   }
 
   ins.showup = function (callback) {
-    console.log("callback", callback);
-    d3.select(".dialog").remove();
+    d3.select("#app-wdl .dialog").remove();
     ins.callback = callback;
-    d3.select(".svg-container")
+
+    d3.select("#app-wdl .svg-container")
       .append("div")
       .attr("class", "dialog")
       .html(data.type === "link" ? linkHtml() : paramHtml());
@@ -122,14 +115,17 @@ export function dialog() {
         });
       });
 
-    d3.select(".closeBtn").on("click", () => {
+    d3.select(".close-button").on("click", () => {
       this.dismiss();
     });
 
     d3.select(".add-button").on("click", () => {
       data.outputParams.push({
-        ...data.outputParams[0],
-        label: "label-j" + Math.round(Math.random() * 100)
+        pid: data.outputParams[0].pid,
+        label: "label-j" + Math.round(Math.random() * 100),
+        type: "File",
+        linked: false,
+        links: []
       });
       ins.callback();
       ins.showup(ins.callback);

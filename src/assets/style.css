@@ -1,5 +1,5 @@
 #app-wdl {
-  padding: 20px;
+  padding: 20px 0;
   position: relative;
 }
 #app-wdl ul li {
@@ -14,8 +14,6 @@
 }
 
 #app-wdl .svg-box {
-  width: 100%;
-  height: 800px;
   border: 2px solid #f1f1f2;
   background: #fafafb;
 }
@@ -32,12 +30,22 @@
 /* Params dialog styles*/
 #app-wdl .dialog {
   position: absolute;
-  left: 5%;
-  top: 15%;
+  right: 0%;
+  top: 20px;
+  height: 800px;
+  background: #f5fcff;
+}
+
+#app-wdl .dialog .body {
+  height: 100%;
+  width: 350px;
+  padding: 20px;
+  color: #000;
 }
 
 #app-wdl .dialog h3 {
-  font-size: 14px;
+  font-size: 1.8em;
+  color: #b9c0ea;
   font-weight: bold;
 }
 
@@ -46,13 +54,61 @@
   padding: 1rem;
 }
 
+#app-wdl .dialog input {
+  overflow: visible;
+  background: rgb(0 0 0 / 0%);
+  border: none;
+  outline: none;
+}
+
 #app-wdl .dialog .params-ul {
   margin: 0;
   padding: 0;
 }
 
-#app-wdl .dialog .params-ul .name {
+#app-wdl .plus-sign {
+  width: 25px;
+  height: 25px;
+  background: rgb(0 0 0 / 0%);
+  position: relative;
+  cursor: pointer;
+  align-self: center;
+}
+#app-wdl .plus-sign::before {
+  content: " ";
+  position: absolute;
+  display: block;
+  background-color: #000;
+  width: 3px;
+  margin-left: -3px;
+  left: 50%;
+  top: 3px;
+  bottom: 3px;
+  z-index: 2;
+}
+#app-wdl .plus-sign::after {
+  content: "";
+  position: absolute;
+  display: block;
+  background-color: #000;
+  height: 3px;
+  margin-top: -3px;
+  top: 50%;
+  left: 1px;
+  right: 3px;
+  z-index: 2;
+}
+/* #app-wdl .dialog .params-ul .name {
   font-size: 12px;
+} */
+
+#app-wdl .dialog .params-ul li {
+  margin: 15px 0;
+}
+
+#app-wdl .dialog .close-button {
+  position: absolute;
+  bottom: 20px;
 }
 
 #app-wdl .dialog .closeBtn {
@@ -81,30 +137,6 @@
   z-index: 1;
   border: 1px solid #eee;
   box-shadow: 0 0 5px #eee;
-
-  ul {
-    padding: 5px;
-    margin: 0;
-    li {
-      text-align: center;
-      font-size: 14px;
-      padding: 5px 0;
-      line-height: 1.4em;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-      color: #000;
-    }
-
-    li:hover {
-      color: #999999;
-    }
-    li:active {
-      color: rgb(169 169 169);
-    }
-    li::nth-last-child(-n + 1) {
-      border: none;
-    }
-  }
 }
 
 #app-wdl .context_menu ul {
@@ -130,4 +162,48 @@
 }
 #app-wdl .context_menu ul li::nth-last-child(-n + 1) {
   border: none;
+}
+
+.button-xsmall {
+  font-size: 70%;
+}
+
+.button-small {
+  font-size: 85%;
+}
+
+.button-large {
+  font-size: 110%;
+}
+
+.button-xlarge {
+  font-size: 125%;
+}
+
+.button-success,
+.button-error,
+.button-warning,
+.button-secondary {
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.button-success {
+  background: #0065ba;
+}
+
+.button-error {
+  background: rgb(202, 60, 60);
+  /* this is a maroon */
+}
+
+.button-warning {
+  background: rgb(223, 117, 20);
+  /* this is an orange */
+}
+
+.button-secondary {
+  background: rgb(66, 184, 221);
+  /* this is a light blue */
 }

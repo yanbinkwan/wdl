@@ -13,23 +13,12 @@ export default function () {
   row.appendChild(col);
   select(col)
     .append("button")
-    .attr("class", "pure-button")
+    .attr("class", "button-success button-small pure-button")
     .attr("type", "button")
     .text("生成代码")
     .on("click", () => {
       const str = generator.generate();
       console.log(str);
-    });
-
-  select(col)
-    .append("button")
-    .attr("class", "btn btn btn-primary")
-    .style("margin", "10px")
-    .attr("type", "button")
-    .text("保存状态")
-    .on("click", () => {
-      localStorage.setItem("task", JSON.stringify(generator.tasks));
-      localStorage.setItem("children", JSON.stringify(generator.root.children));
     });
 
   return container;

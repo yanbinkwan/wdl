@@ -8,7 +8,7 @@ const ContextMenu = function () {
   const ins = function (selection) {
     const options = ["删除", "修改"];
     const container = selection
-      .selectAll(".context_menu")
+      .selectAll("#app-wdl .context_menu")
       .data([null])
       .join("div")
       .classed("context_menu", true)

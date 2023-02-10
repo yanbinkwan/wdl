@@ -5,14 +5,18 @@ export default () => {
   let data;
 
   const ins = selection => {
-    selection
+    const divc = selection
+      .append("div")
+      .attr("class", "pure-menu")
+      .style("display", "inline-block");
+
+    divc
       .append("ul")
-      .attr("class", "list-group")
+      .attr("class", "pure-menu-list")
       .selectAll("li")
       .data(data)
       .join("li")
-      .attr("class", "list-group-item")
-      .text(d => d.name)
+      .attr("class", "pure-menu-item")
       .attr("draggable", true)
       .on("dragstart", ev => {
         ev.dataTransfer.dropEffect = "copy";
@@ -23,14 +27,17 @@ export default () => {
       .on("dragend", function (ev, d) {
         ev.preventDefault();
         const cObj = JSON.parse(JSON.stringify(d));
-        cObj.id = cObj.id + "" + d3.randomInt(999)();
         cObj.inputParams &&
-          cObj.inputParams.forEach(input => (input.pid = cObj.id));
+          cObj.inputParams.forEach(input => (input.pid = cObj.toolId));
         cObj.outputParams &&
-          cObj.outputParams.forEach(output => (output.pid = cObj.id));
+          cObj.outputParams.forEach(output => (output.pid = cObj.toolId));
         ev.dataTransfer.task = cObj;
         dispatch.call("dragend-g", null, ev);
-      });
+      })
+      .append("a")
+      .attr("class", "pure-menu-link")
+      .attr("href", "#")
+      .text(d => d.name);
   };
 
   ins.data = _ => (_ ? (data = _) && ins : data);

@@ -9,13 +9,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/task/list", (req, res) => {
-  console.log(req.body);
   return res.status(200).json({
     status: "OK",
     result: {
       records: [
         {
           name: "input",
+          toolId: 98,
           type: 98,
           inputParams: [],
           outputParams: [
@@ -27,6 +27,7 @@ app.post("/task/list", (req, res) => {
         },
         {
           name: "output",
+          toolId: 99,
           type: 99,
           inputParams: [
             {

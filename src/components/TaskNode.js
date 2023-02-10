@@ -5,9 +5,12 @@ import ContextMenu from "./ContextMenu.js";
 export default function () {
   let data;
   const dg = dialog();
-  const panelWidth = 80;
-  const panelHeight = 40;
-  const streamSize = 4;
+  const panelWidth = 50;
+  const panelHeight = 25;
+  const streamSize = 2;
+  const fontSize = 1.8;
+  const mainColor = "#f5fcff";
+  const secondColor = "#0065ba";
 
   const dispatch = d3.dispatch("link", "delete", "update");
 
@@ -27,11 +30,11 @@ export default function () {
       .classed("panel", true)
       .attr("height", panelHeight)
       .attr("width", panelWidth)
-      .attr("rx", 2.5)
-      .attr("ry", 2.5)
-      .attr("stroke", "#676785")
-      .attr("stroke-width", 0.5)
-      .attr("fill", "#313147")
+      .attr("rx", 1)
+      .attr("ry", 1)
+      .attr("stroke", secondColor)
+      .attr("stroke-width", 0.2)
+      .attr("fill", mainColor)
       .on("click", (d, d1) => {
         dg.data(d1).showup(function () {
           dispatch.call("update");
@@ -39,7 +42,7 @@ export default function () {
       })
       .on("contextmenu", function (event, d) {
         event.preventDefault();
-        d3.select("#app").call(
+        d3.select("#app-wdl").call(
           ContextMenu()
             .x(event.pageX)
             .y(event.pageY)
@@ -50,7 +53,10 @@ export default function () {
         );
       });
     container
-      .append("text")
+      .selectAll("text.tag")
+      .data(d => [d])
+      .join("text")
+      .attr("class", "tag")
       .text(d => {
         switch (d.type) {
           case 0:
@@ -64,26 +70,32 @@ export default function () {
         }
       })
       .attr("text-anchor", "end")
-      .attr("dx", panelWidth - 5)
-      .attr("y", 8)
-      .attr("font-size", "4")
-      .attr("fill", "#e9ecff");
+      .attr("dx", panelWidth - 2.5)
+      .attr("y", 4)
+      .attr("font-size", fontSize)
+      .attr("fill", "#000");
     container
-      .append("text")
+      .selectAll("text.name")
+      .data(d => [d])
+      .join("text")
+      .attr("class", "name")
       .text(d => d.name)
       .attr("text-anchor", "start")
-      .attr("y", 8)
-      .attr("dx", 5)
-      .attr("font-size", "4")
-      .attr("fill", "#e9ecff")
+      .attr("y", 4)
+      .attr("dx", 2.5)
+      .attr("font-size", fontSize)
+      .attr("fill", "#000")
       .style("font-weight", "bold");
     container
-      .append("text")
+      .selectAll("text.function")
+      .data(d => [d])
+      .join("text")
+      .attr("class", "function")
       .text(d => d.callFunction)
-      .attr("y", 16)
-      .attr("dx", 5)
-      .attr("font-size", "4")
-      .attr("fill", "#e9ecff");
+      .attr("y", 8)
+      .attr("dx", 2.5)
+      .attr("font-size", fontSize)
+      .attr("fill", "#000");
     container
       .selectAll("circle.inputs")
       .data(d => d.inputParams || [])
@@ -94,17 +106,17 @@ export default function () {
       .attr("rx", 1)
       .attr("ry", 1)
       .attr("x", d => {
-        d.x = -2.5;
+        d.x = -1;
         return d.x;
       })
       .attr("y", (d, i, x) => {
-        const y = 38 / (x.length + 1);
+        const y = 25 / (x.length + 1);
         d.y = (i + 1) * y - 2 / streamSize;
         return d.y;
       })
-      .attr("fill", d => (d.linked ? "#85c9d1" : "#272643"))
-      .attr("stroke", d => (d.linked ? "#656593" : "#656593"))
-      .attr("stroke-width", 0.4);
+      .attr("fill", d => (d.linked ? mainColor : "#FFF"))
+      .attr("stroke", "#333333")
+      .attr("stroke-width", 0.3);
     container
       .selectAll("circle.outputs")
       .data(d => d.outputParams || [])
@@ -115,17 +127,17 @@ export default function () {
       .attr("rx", 1)
       .attr("ry", 1)
       .attr("x", d => {
-        d.x = panelWidth - 1.5;
+        d.x = panelWidth - 1;
         return d.x;
       })
       .attr("y", (d, i, x) => {
-        const y = 38 / (x.length + 1);
+        const y = 25 / (x.length + 1);
         d.y = (i + 1) * y - 2 / streamSize;
         return d.y;
       })
-      .attr("fill", d => (d.linked ? "#85c9d1" : "#272643"))
-      .attr("stroke", d => (d.linked ? "#656593" : "#656593"))
-      .attr("stroke-width", 0.4)
+      .attr("fill", d => (d.linked ? mainColor : "#FFF"))
+      .attr("stroke", secondColor)
+      .attr("stroke-width", 0.3)
       .call(linkNode(selection));
 
     const linksData = data
@@ -135,14 +147,15 @@ export default function () {
       .filter(d => d.links)
       .map(d => d.links)
       .flat();
-
     selection
+      .select(".view")
       .selectAll("path")
       .data(linksData)
       .join("path")
-      .attr("stroke", "#85c9d1")
+      .attr("stroke", "#333333")
       .attr("fill", "none")
       .attr("class", d => d.id)
+      .attr("stroke-width", "0.5")
       .attr("d", d3.linkHorizontal())
       .on("click", (d, d1) => {
         dg.data({
@@ -178,7 +191,7 @@ export default function () {
           d3.select("." + input.linkId).attr(
             "d",
             d3.linkHorizontal().target(d => {
-              d.target = [x + input.x + 2, y + input.y + 2];
+              d.target = [x + input.x + 1, y + input.y + 1];
               return d.target;
             })
           );
@@ -193,7 +206,7 @@ export default function () {
               .attr(
                 "d",
                 d3.linkHorizontal().source(d => {
-                  d.source = [x + output.x + 2, y + output.y + 2];
+                  d.source = [x + output.x + 1, y + output.y + 1];
                   return d.source;
                 })
               );
@@ -218,16 +231,18 @@ export default function () {
     function dragstarted(event, d) {
       linkInfo = Object.create(null);
       const parentData = getParentData(d.pid);
-      const x = event.x + parentData.x + 2;
-      const y = event.y + parentData.y + 2;
-
+      const x = event.x + parentData.x + 0.8;
+      const y = event.y + parentData.y + 0.8;
+      console.log(d);
       linkInfo.id = `path-${d.pid}-` + d3.randomInt(0, 9999)();
       linkInfo.source = [x, y];
 
       selection
+        .select(".view")
         .append("path")
         .data([linkInfo])
-        .attr("stroke", "#85c9d1")
+        .attr("stroke", "#333333")
+        .attr("stroke-width", "0.5")
         .attr("fill", "none")
         .attr("class", linkInfo.id)
         .lower();
@@ -260,13 +275,13 @@ export default function () {
         d.links.push(linkInfo);
         d.linked = true;
         d3.select(this)
-          .attr("fill", "#85c9d1")
-          .attr("stroke", "#272643")
-          .attr("stroke-width", "0.7");
+          .attr("fill", mainColor)
+          .attr("stroke", "#333333")
+          .attr("stroke-width", 0.3);
         hasLinked
-          .attr("fill", "#85c9d1")
-          .attr("stroke", "#272643")
-          .attr("stroke-width", "0.7");
+          .attr("fill", mainColor)
+          .attr("stroke", "#333333")
+          .attr("stroke-width", 0.3);
 
         hasLinked.each(link => {
           link.linkId = linkInfo.id;
@@ -311,7 +326,7 @@ export default function () {
     }
 
     function getParentData(pid) {
-      return ins.data().find(pd => pd.id === pid);
+      return ins.data().find(pd => pd.toolId === pid);
     }
 
     return d3

@@ -74,7 +74,7 @@ export default function (selection, tasksData, savedTasks) {
   };
 
   const handleUpdate = () => {
-    select(".view").call(TaskIns.data(generator.tasks));
+    select(".svg-box").call(TaskIns.data(generator.tasks));
   };
 
   const TaskIns = TaskNode()
@@ -90,7 +90,7 @@ export default function (selection, tasksData, savedTasks) {
     });
     generator.root.children = savedTasks.children;
     setTimeout(() => {
-      select(".view").call(TaskIns.data(generator.tasks));
+      select(".svg-box").call(TaskIns.data(generator.tasks));
     }, 0);
   }
 }
