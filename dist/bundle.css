@@ -45,8 +45,8 @@ Copyright (c) Nicolas Gallagher and Jonathan Neal
   cursor: grab;
 }
 
-#app-wdl .outputs,
-#app-wdl .inputs {
+#app-wdl .output,
+#app-wdl .input {
   cursor: pointer;
 }
 /* Params dialog styles*/

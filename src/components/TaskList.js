@@ -1,10 +1,11 @@
 import TaskItem from "./TaskItem";
-import TaskNode from "./TaskNode";
+import Panel from "./node/Panel";
 import Generator from "../wdlGenerator";
 import { select } from "d3";
 
 export default function (selection, tasksData, savedTasks) {
   const generator = Generator.create();
+
   const dragEventHandler = value => {
     const {
       x,
@@ -66,10 +67,10 @@ export default function (selection, tasksData, savedTasks) {
     data.inputParams &&
       data.inputParams.forEach(input => {
         if (input.linkId) {
-          select("." + input.linkId).remove();
+          select(`.${input.linkId}`).remove();
         }
       });
-    generator.removeTask(data.id);
+    generator.removeTask(data.toolId);
     select(".svg-box").call(TaskIns.data(generator.tasks));
   };
 
@@ -77,7 +78,7 @@ export default function (selection, tasksData, savedTasks) {
     select(".svg-box").call(TaskIns.data(generator.tasks));
   };
 
-  const TaskIns = TaskNode()
+  const TaskIns = Panel()
     .on("link", handleLinkEvent)
     .on("delete", handleTaskDeleteEvent)
     .on("update", handleUpdate);

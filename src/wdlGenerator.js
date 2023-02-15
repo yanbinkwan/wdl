@@ -25,10 +25,10 @@ export default class Generator {
   }
 
   removeTask(id) {
-    const index = this.tasks.findIndex(task => task.id === id);
+    const index = this.tasks.findIndex(task => task.toolId === id);
     this.tasks.splice(index, 1);
     this.root.children.forEach((child, i) => {
-      if (child.task.id === id) {
+      if (child.task.toolId === id) {
         this.root.children.splice(i, 1);
       }
     });
