@@ -3,12 +3,13 @@ import { dialog } from "../ParamsDialog.js";
 import Stream from "./Stream";
 import ContextMenu from "../ContextMenu.js";
 import Link from "./Link";
-import { INPUT_TASK, OUTPUT_TASK, TOOL_TASK } from "../../Constants.js";
+import { INPUT_TASK, OUTPUT_TASK, SVG_ID, TOOL_TASK } from "../../Constants.js";
 import Text from "./Text.js";
+import { EventEmitter } from "../../EventEmitter.js";
+import Generator from "../../wdlGenerator.js";
 
 export default function () {
   let data;
-  const dg = dialog();
   const panelWidth = 50;
   const panelHeight = 25;
   const streamSize = 2;
@@ -16,6 +17,10 @@ export default function () {
   const mainColor = "#f5fcff";
   const secondColor = "#0065ba";
   const dispatch = d3.dispatch("link", "delete", "update");
+
+  const generator = Generator.create();
+  const dg = dialog();
+  const emitter = EventEmitter();
 
   const ins = selection => {
     const container = selection
@@ -47,11 +52,17 @@ export default function () {
       })
       .on("contextmenu", function (event, d) {
         event.preventDefault();
-        d3.select("#app-wdl").call(
+        d3.select(SVG_ID).call(
           ContextMenu()
             .x(event.pageX)
             .y(event.pageY)
             .on("delete", function ({ ins }) {
+              d.outputParams
+                .concat(d.inputParams)
+                .map(param => param.linkedIds)
+                .forEach(ids =>
+                  ids.forEach(id => emitter.emit(`${id}-delete`, id))
+                );
               dispatch.call("delete", null, d);
               ins.dismiss();
             })
@@ -62,13 +73,16 @@ export default function () {
     container.each(function (d) {
       const inputStreams = Stream()
         .data(d.inputParams)
+        .emitter(emitter)
         .streamSize(0.8)
         .mainColor(mainColor)
         .secondColor(secondColor)
         .containerHeight(panelHeight)
         .containerWidth(panelWidth);
+
       const outputStreams = Stream()
         .data(d.outputParams)
+        .emitter(emitter)
         .on("link", d => {
           dispatch.call("link", null, d);
         })
@@ -126,30 +140,30 @@ export default function () {
     });
 
     // process link path
-    const linksData = data
-      .filter(d => d.outputParams)
-      .map(d => d.outputParams)
-      .flat()
-      .filter(d => d.links)
-      .map(d => {
-        if (d.links) {
-          d.links.forEach(link => {
-            link.source = [link.source[0], link.y + d.cy + streamSize / 2];
-          });
-        }
-        return d.links;
-      })
-      .flat();
+    // const linksData = data
+    //   .filter(d => d.outputParams)
+    //   .map(d => d.outputParams)
+    //   .flat()
+    //   .filter(d => d.links)
+    //   .map(d => {
+    //     if (d.links) {
+    //       d.links.forEach(link => {
+    //         link.source = [link.source[0], link.y + d.cy + streamSize / 2];
+    //       });
+    //     }
+    //     return d.links;
+    //   })
+    //   .flat();
 
-    linksData.forEach(d =>
-      selection.select(".view").call(
-        Link()
-          .data(d)
-          .on("click", d => {
-            dg.data(d.data).showup();
-          })
-      )
-    );
+    // linksData.forEach(d =>
+    //   selection.select(".view").call(
+    //     Link()
+    //       .data(d)
+    //       .on("click", d => {
+    //         dg.data(d.data).showup();
+    //       })
+    //   )
+    // );
 
     function moveNode() {
       function dragstarted() {
@@ -163,35 +177,22 @@ export default function () {
         d.y = y;
         d3.select(this).attr("transform", `translate(${d.x}, ${d.y})`);
 
-        // translate circles inside of g
-        d.inputParams &&
-          d.inputParams.forEach(input => {
-            d3.select("." + input.linkId).attr(
-              "d",
-              d3.linkHorizontal().target(d => {
-                d.target = [x + input.cx, y + input.cy];
-                return d.target;
-              })
-            );
-          });
-
-        d.outputParams &&
-          d.outputParams.forEach(output => {
-            const { links = [] } = output;
-            links.forEach(link => {
-              d3.select("." + link.id)
-                .data([link])
-                .attr(
-                  "d",
-                  d3.linkHorizontal().source(d => {
-                    d.x = x;
-                    d.y = y;
-                    d.source = [x + output.cx, y + output.cy];
-                    return d.source;
-                  })
-                );
+        d.inputParams.forEach(param => {
+          generator.links
+            .filter(link => param.linkedIds.includes(link.id))
+            .forEach(link => {
+              link.target = [x + param.cx, y + param.cy];
             });
-          });
+        });
+        d.outputParams.forEach(param => {
+          generator.links
+            .filter(link => param.linkedIds.includes(link.id))
+            .forEach(link => {
+              link.source = [x + param.cx, y + param.cy];
+            });
+        });
+
+        d3.select(".svg-box .view").call(Link().data(generator.links));
       }
 
       function dragended() {

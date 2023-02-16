@@ -1,4 +1,4 @@
-import { dispatch, linkHorizontal, select } from "d3";
+import { dispatch, linkHorizontal } from "d3";
 
 export default function () {
   let data;
@@ -9,8 +9,8 @@ export default function () {
 
   const ins = selection => {
     selection
-      .selectAll(`path.${data.id}`)
-      .data([data])
+      .selectAll("path")
+      .data(data)
       .join("path")
       .attr("class", d => d.id)
       .attr("stroke", color)
@@ -29,10 +29,6 @@ export default function () {
   ins.on = function () {
     const value = disEvent.on.apply(disEvent, arguments);
     return value === disEvent ? ins : value;
-  };
-
-  ins.remove = () => {
-    select(`.${data.id}`).remove();
   };
 
   ins.link = () => {};

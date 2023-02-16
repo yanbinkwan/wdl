@@ -2,6 +2,7 @@ import TaskItem from "./TaskItem";
 import Panel from "./node/Panel";
 import Generator from "../wdlGenerator";
 import { select } from "d3";
+import Link from "./node/Link";
 
 export default function (selection, tasksData, savedTasks) {
   const generator = Generator.create();
@@ -56,23 +57,6 @@ export default function (selection, tasksData, savedTasks) {
       );
     }
   };
-  const handleTaskDeleteEvent = data => {
-    data.outputParams &&
-      data.outputParams.forEach(output => {
-        const { links = [] } = output;
-        links.forEach(link => {
-          select("." + link.id).remove();
-        });
-      });
-    data.inputParams &&
-      data.inputParams.forEach(input => {
-        if (input.linkId) {
-          select(`.${input.linkId}`).remove();
-        }
-      });
-    generator.removeTask(data.toolId);
-    select(".svg-box").call(TaskIns.data(generator.tasks));
-  };
 
   const handleUpdate = () => {
     select(".svg-box").call(TaskIns.data(generator.tasks));
@@ -80,7 +64,10 @@ export default function (selection, tasksData, savedTasks) {
 
   const TaskIns = Panel()
     .on("link", handleLinkEvent)
-    .on("delete", handleTaskDeleteEvent)
+    .on("delete", data => {
+      generator.removeTask(data.toolId);
+      select(".svg-box").call(TaskIns.data(generator.tasks));
+    })
     .on("update", handleUpdate);
 
   selection.call(TaskItem().data(tasksData).on("dragend-g", dragEventHandler));
@@ -89,9 +76,11 @@ export default function (selection, tasksData, savedTasks) {
     savedTasks.tasks.forEach(task => {
       generator.pushTask(task);
     });
+    generator.links = savedTasks.links;
     generator.root.children = savedTasks.children;
     setTimeout(() => {
       select(".svg-box").call(TaskIns.data(generator.tasks));
+      select(".svg-box .view").call(Link().data(generator.links));
     }, 0);
   }
 }

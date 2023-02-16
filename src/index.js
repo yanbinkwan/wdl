@@ -51,7 +51,8 @@ const ins = {
     const generator = Generator.create();
     return {
       tasks: generator.tasks,
-      children: generator.root.children
+      children: generator.root.children,
+      links: generator.links
     };
   }
 };

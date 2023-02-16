@@ -1,5 +1,6 @@
 import { dispatch, drag, select, randomInt, selectAll } from "d3";
 import Link from "./Link";
+import Generator from "../../wdlGenerator";
 
 export default function () {
   let data = [];
@@ -9,6 +10,8 @@ export default function () {
   let strokeWidth = 0.3;
   let mainColor;
   let secondColor;
+  let emitter;
+  const generator = Generator.create();
 
   const disEvent = dispatch("link", "link-click", "delete", "update");
 
@@ -18,15 +21,16 @@ export default function () {
    * @param {String} type "input" | "output"
    */
   const ins = (selection, type = "input") => {
+    emitter = emitter;
     data.forEach((d, i, arr) => {
       d.cx = type === "input" ? 0 : containerWidth;
       const y = containerHeight / (arr.length + 1);
       d.cy = (i + 1) * y - streamSize / streamSize; // y - 2
-      d.links = d.links || [];
-      d.linked = false;
+      d.linkedIds = d.linkedIds || [];
+      d.linked = d.linkedIds.length > 0;
     });
 
-    const link = () => {
+    const linkDrag = () => {
       let pd, linkInfo, linkPath;
       function dragstarted(_, d) {
         linkInfo = Object.create(null);
@@ -39,15 +43,16 @@ export default function () {
         linkInfo.y = py;
         linkInfo.source = [x + px, y + py];
         linkInfo.target = [x + px, y + py];
+        generator.links.push(linkInfo);
 
-        linkPath = new Link().data(linkInfo);
+        linkPath = new Link().data(generator.links);
         select(".svg-box .view").call(linkPath);
       }
       function dragged(event) {
         const { x: px, y: py } = pd;
         const { x, y } = event;
         linkInfo.target = [x + px, y + py];
-        linkPath.data(linkInfo);
+        // linkPath.data(linkInfo);
         select(".svg-box .view").call(linkPath);
       }
       function dragended(event, d) {
@@ -71,12 +76,12 @@ export default function () {
             return isValid;
           }
         );
-        if (ifLinkedSize.size <= 0) {
-          linkPath.remove();
+        if (ifLinkedSize.size() <= 0) {
+          generator.links = generator.links.filter(info => info === linkInfo);
           return;
         }
 
-        d.links.push(linkInfo);
+        d.linkedIds.push(linkInfo.id);
         d.linked = true;
         select(this)
           .attr("fill", mainColor)
@@ -87,7 +92,7 @@ export default function () {
           .attr("stroke", "#333333")
           .attr("stroke-width", strokeWidth);
         ifLinkedSize.each(link => {
-          link.linkId = linkInfo.id;
+          link.linkedIds = [linkInfo.id];
           link.linked = true;
         });
         const inputData = ifLinkedSize.datum();
@@ -98,11 +103,19 @@ export default function () {
           targetLabel: linkedInputNode.name,
           targetInput: inputData.label
         };
-        select(".svg-box .view").call(
-          linkPath
-            .data(linkInfo)
-            .on("click", () => disEvent.call("link-click", null, linkInfo.data))
-        );
+
+        emitter.on(`${linkInfo.id}-delete`, id => {
+          d.linkedIds = d.linkedIds.filter(dId => dId != id);
+          inputData.linkedIds = inputData.linkedIds.filter(dId => dId != id);
+          generator.links = generator.links.filter(link => link.id !== id);
+          select(".svg-box .view").call(
+            linkPath
+              .data(generator.links)
+              .on("click", () =>
+                disEvent.call("link-click", null, linkInfo.data)
+              )
+          );
+        });
 
         disEvent.call("link", null, {
           sourceNamespace: pd.callFunction,
@@ -129,7 +142,7 @@ export default function () {
       .attr("fill", mainColor)
       .attr("stroke", d => (d.linked ? "#333333" : secondColor))
       .attr("stroke-width", strokeWidth)
-      .call(type === "output" ? link() : () => {});
+      .call(type === "output" ? linkDrag() : () => {});
     return this;
   };
 
@@ -141,6 +154,8 @@ export default function () {
   };
 
   ins.streamSize = _ => (_ ? (streamSize = _) && ins : streamSize);
+
+  ins.emitter = _ => (_ ? (emitter = _) && ins : emitter);
 
   ins.strokeWidth = _ => (_ ? (strokeWidth = _) && ins : strokeWidth);
 
