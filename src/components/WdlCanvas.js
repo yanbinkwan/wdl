@@ -1,7 +1,11 @@
-import { select, create, zoom } from "d3";
+import { select, create, zoom, selectAll } from "d3";
+import * as d3 from "d3";
 
-const height = 120;
-const width = 280;
+// const height = 120;
+// const width = 280;
+
+const height = window.innerHeight;
+const width = window.innerWidth;
 
 export default function () {
   const svg = create("svg")
@@ -16,31 +20,27 @@ export default function () {
     .on("click", () => {
       select(".context_menu").remove();
     });
-  svg
-    .append("g")
-    .attr("class", "g-dots")
-    .selectAll("circle.dot")
-    .data(square_grid())
-    .join("circle")
-    .attr("class", "dot")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
-    .attr("r", d => 0.2)
-    .attr("fill", "#e2e1eb")
-    .lower();
+  // svg
+  //   .append("g")
+  //   .attr("class", "g-dots")
+  //   .selectAll("circle.dot")
+  //   .data(square_grid())
+  //   .join("circle")
+  //   .attr("class", "dot")
+  //   .attr("cx", d => d.x)
+  //   .attr("cy", d => d.y)
+  //   .attr("r", 0.2)
+  //   .attr("fill", "#e2e1eb")
+  //   .lower();
 
-  const view = svg
-    .append("g")
-    .attr("class", "view")
-    .attr("width", width)
-    .attr("height", height);
+  const view = svg.append("g").attr("class", "view");
 
   const z = zoom()
     .translateExtent([
       [0, 0],
-      [width + 100, height + 100]
+      [width, height]
     ])
-    .scaleExtent([1, 40])
+    .scaleExtent([1, 20])
     .filter(event => {
       event.preventDefault();
       return (!event.ctrlKey || event.type === "wheel") && !event.button;

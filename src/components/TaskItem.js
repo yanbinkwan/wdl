@@ -11,6 +11,13 @@ export default () => {
       .style("display", "inline-block");
 
     divc
+      .append("div")
+      .attr("class", "toggle")
+      .on("click", function () {
+        divc.classed("close", !divc.classed("close"));
+      });
+
+    divc
       .append("ul")
       .attr("class", "pure-menu-list")
       .selectAll("li")

@@ -10,19 +10,9 @@ import "./assets/style.css";
 
 const ins = {
   init: (tasks = []) => {
-    const row = document.createElement("div");
-    row.className = "row container";
-
-    const wdlCanvasCol = document.createElement("div");
-    wdlCanvasCol.className = "col-10";
-    wdlCanvasCol.appendChild(WdlCanvas());
-
-    row.appendChild(wdlCanvasCol);
-    // row.appendChild(tasksCol);
-
     const svgContainer = document.createElement("div");
-    svgContainer.className = "container-fluid svg-container";
-    svgContainer.appendChild(row);
+    svgContainer.className = "svg-container";
+    svgContainer.appendChild(WdlCanvas());
 
     const app = document.getElementById("app-wdl");
     svgContainer.appendChild(ActionButtons());
@@ -37,10 +27,7 @@ const ins = {
   },
 
   setTaskList: (tasks, savedTasks) => {
-    const tasksCol = document.createElement("div");
-    tasksCol.className = "col-2";
-    select(tasksCol).call(TaskList, tasks, savedTasks);
-    if (tasks.length > 0) document.querySelector(".container").append(tasksCol);
+    select(".svg-container").call(TaskList, tasks, savedTasks);
   },
 
   getCode: code => {

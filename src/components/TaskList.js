@@ -1,8 +1,9 @@
 import TaskItem from "./TaskItem";
 import Panel from "./node/Panel";
 import Generator from "../wdlGenerator";
-import { select } from "d3";
+import { select, selectAll, zoomTransform } from "d3";
 import Link from "./node/Link";
+import { INPUT_TASK } from "../Constants";
 
 export default function (selection, tasksData, savedTasks) {
   const generator = Generator.create();
@@ -13,18 +14,16 @@ export default function (selection, tasksData, savedTasks) {
       y,
       dataTransfer: { task }
     } = value;
-
-    // transform position values
-    const svgnode = select(".svg-box").node();
-    const pt = svgnode.createSVGPoint();
-    pt.x = x;
-    pt.y = y;
-    const svgP = pt.matrixTransform(svgnode.getScreenCTM().inverse());
-    task.x = svgP.x;
-    task.y = svgP.y;
+    const domPoint = DOMPointReadOnly.fromPoint({ x, y });
+    const svgP = domPoint.matrixTransform(
+      select(".svg-box").node().getScreenCTM().inverse()
+    );
+    const transform = zoomTransform(select(".svg-box").node());
+    task.x = (svgP.x + Math.abs(transform.x)) / transform.k;
+    task.y = (svgP.y + Math.abs(transform.y)) / transform.k;
 
     generator.pushTask(task);
-    if (task.type === 98) {
+    if (task.type === INPUT_TASK) {
       generator.root.children.unshift({
         type: "input",
         task
@@ -70,7 +69,11 @@ export default function (selection, tasksData, savedTasks) {
     })
     .on("update", handleUpdate);
 
-  selection.call(TaskItem().data(tasksData).on("dragend-g", dragEventHandler));
+  if (tasksData.length > 0) {
+    selection.call(
+      TaskItem().data(tasksData).on("dragend-g", dragEventHandler)
+    );
+  }
 
   if (savedTasks) {
     savedTasks.tasks.forEach(task => {
