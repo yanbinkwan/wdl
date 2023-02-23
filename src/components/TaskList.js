@@ -1,7 +1,7 @@
 import TaskItem from "./TaskItem";
 import Panel from "./node/Panel";
 import Generator from "../wdlGenerator";
-import { select, selectAll, zoomTransform } from "d3";
+import { select, zoomTransform } from "d3";
 import Link from "./node/Link";
 import { INPUT_TASK } from "../Constants";
 

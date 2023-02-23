@@ -77,7 +77,14 @@ export default function () {
           }
         );
         if (ifLinkedSize.size() <= 0) {
-          generator.links = generator.links.filter(info => info === linkInfo);
+          generator.links = generator.links.filter(info => info !== linkInfo);
+          select(".svg-box .view").call(
+            linkPath
+              .data(generator.links)
+              .on("click", () =>
+                disEvent.call("link-click", null, linkInfo.data)
+              )
+          );
           return;
         }
 
@@ -118,7 +125,7 @@ export default function () {
         });
 
         disEvent.call("link", null, {
-          sourceNamespace: pd.callFunction,
+          sourceNamespace: pd.callFunctiona,
           source: d,
           target: linkedInputNode,
           targetInput: inputData

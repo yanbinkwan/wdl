@@ -12,10 +12,11 @@ const ins = {
   init: (tasks = []) => {
     const svgContainer = document.createElement("div");
     svgContainer.className = "svg-container";
-    svgContainer.appendChild(WdlCanvas());
+    const canvas = WdlCanvas();
+    svgContainer.appendChild(canvas.node);
 
     const app = document.getElementById("app-wdl");
-    svgContainer.appendChild(ActionButtons());
+    svgContainer.appendChild(ActionButtons(canvas.zoom));
     app.appendChild(svgContainer);
 
     if (tasks.length > 0) {

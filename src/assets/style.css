@@ -18,8 +18,16 @@
 #app-wdl .action-buttons {
   position: absolute;
   left: 25px;
-  top: 20px;
-  width: 500px;
+  bottom: 35px;
+  background: rgb(255 255 255);
+  padding: 5px 15px;
+  border-radius: 5px;
+  border: 1px solid rgb(220 220 220);
+}
+
+#app-wdl .action-buttons img {
+  margin: 0 5px;
+  cursor: pointer;
 }
 
 #app-wdl .svg-box {

@@ -1,8 +1,4 @@
-import { select, create, zoom, selectAll } from "d3";
-import * as d3 from "d3";
-
-// const height = 120;
-// const width = 280;
+import { select, create, zoom } from "d3";
 
 const height = window.innerHeight;
 const width = window.innerWidth;
@@ -12,6 +8,7 @@ export default function () {
     .attr("class", "svg-box")
     .attr("viewBox", [0, 0, width, height])
     .attr("stroke-width", 2)
+    .style("pointer-events", "all")
     .call(dropzone)
     .on("contextmenu", event => {
       // preventing right click
@@ -20,49 +17,58 @@ export default function () {
     .on("click", () => {
       select(".context_menu").remove();
     });
-  // svg
-  //   .append("g")
-  //   .attr("class", "g-dots")
-  //   .selectAll("circle.dot")
-  //   .data(square_grid())
-  //   .join("circle")
-  //   .attr("class", "dot")
-  //   .attr("cx", d => d.x)
-  //   .attr("cy", d => d.y)
-  //   .attr("r", 0.2)
-  //   .attr("fill", "#e2e1eb")
-  //   .lower();
+
+  svg
+    .append("g")
+    .attr("class", "g-dots")
+    .selectAll("circle.dot")
+    .data(square(width, height))
+    .join("circle")
+    .attr("class", "dot")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("r", d => d.r)
+    .attr("fill", "#e2e1eb")
+    .lower();
 
   const view = svg.append("g").attr("class", "view");
-
   const z = zoom()
     .translateExtent([
       [0, 0],
       [width, height]
     ])
-    .scaleExtent([1, 20])
+    .scaleExtent([3, 15])
     .filter(event => {
       event.preventDefault();
       return (!event.ctrlKey || event.type === "wheel") && !event.button;
     })
     .on("zoom", ({ transform }) => {
       view.attr("transform", transform);
+      select(".g-dots").attr("transform", transform);
     });
+  z.scaleTo(svg, 3);
+  z.translateTo(svg, width / 2, height / 2);
   svg.call(z);
 
-  return svg.node();
+  return { node: svg.node(), zoom: z };
 }
 
-// Parameters refs: https://observablehq.com/@danleesmith/grid-studies-vol-1
-function square_grid(s = 480, n = 100, go = [0.5, 0.5], co = [0.5, 0.5]) {
-  const cs = s / n;
-  const x = i => (i % n) * cs - cs * n * go[0] + cs * co[0];
-  const y = i => Math.floor(i / n) * cs - cs * n * go[1] + cs * co[1];
-  const grid = [...Array(n * n).keys()];
-  grid.forEach((v, i) => {
-    grid[i] = { i: i, x: x(i), y: y(i), r: cs };
-  });
-  return grid;
+function square(w = width, h = height) {
+  const r = 1;
+  const m = 25;
+  const xl = Math.round(w / (r + m));
+  const hl = Math.round(h / (r + m));
+
+  const x = i => i * (r + m);
+
+  const xa = Array(xl)
+    .fill(0)
+    .map((_, i) => {
+      return Array(hl)
+        .fill({})
+        .map((_, j) => ({ x: x(i), y: x(j), r }));
+    });
+  return xa.flat();
 }
 
 function dropzone(selection) {
