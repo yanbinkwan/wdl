@@ -125,7 +125,7 @@ export default function () {
         });
 
         disEvent.call("link", null, {
-          sourceNamespace: pd.callFunctiona,
+          sourceNamespace: pd.callFunction,
           source: d,
           target: linkedInputNode,
           targetInput: inputData

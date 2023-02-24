@@ -65,7 +65,11 @@ export default class Generator {
     });
     let imports = "";
     Object.keys(this.imports).forEach(key => {
-      const im = this.imports[key];
+      let im = this.imports[key];
+      const slashIndex = im.lastIndexOf("/");
+      if (slashIndex != -1) {
+        im = im.substring(slashIndex + 1, im.length);
+      }
       imports += `import "${im}" as ${key} \n`;
     });
 

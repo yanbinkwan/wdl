@@ -46,6 +46,15 @@ export default function (zoom) {
         // const str = generator.generate();
         // console.log(str);
       });
+    select(container)
+      .append("img")
+      .attr("src", ZoomReset)
+      .attr("width", 24)
+      .attr("height", 24)
+      .on("click", () => {
+        const str = generator.generate();
+        console.log(str);
+      });
   }, 0);
 
   return container;
