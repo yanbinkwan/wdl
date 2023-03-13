@@ -39,12 +39,11 @@ export default function (zoom) {
       .attr("width", 24)
       .attr("height", 24)
       .on("click", () => {
-        select(".svg-box")
-          .transition()
-          .duration(750)
-          .call(zoom.transform, zoomIdentity);
-        // const str = generator.generate();
-        // console.log(str);
+        zoom.scaleTo(select(".svg-box"), 7);
+        // select(".svg-box")
+        //   .transition()
+        //   .duration(750)
+        //   .call(zoom.transform, zoomIdentity);
       });
     select(container)
       .append("img")

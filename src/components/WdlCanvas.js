@@ -37,7 +37,7 @@ export default function () {
       [0, 0],
       [width, height]
     ])
-    .scaleExtent([3, 15])
+    .scaleExtent([7, 19])
     .filter(event => {
       event.preventDefault();
       return (!event.ctrlKey || event.type === "wheel") && !event.button;
@@ -46,16 +46,14 @@ export default function () {
       view.attr("transform", transform);
       select(".g-dots").attr("transform", transform);
     });
-  z.scaleTo(svg, 3);
-  z.translateTo(svg, width / 2, height / 2);
   svg.call(z);
 
   return { node: svg.node(), zoom: z };
 }
 
 function square(w = width, h = height) {
-  const r = 1;
-  const m = 25;
+  const r = 0.5;
+  const m = 10;
   const xl = Math.round(w / (r + m));
   const hl = Math.round(h / (r + m));
 

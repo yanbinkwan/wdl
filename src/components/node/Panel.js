@@ -13,7 +13,7 @@ export default function () {
   const panelWidth = 50;
   const panelHeight = 25;
   const streamSize = 2;
-  const fontSize = 1.8;
+  const fontSize = 2.5;
   const mainColor = "#f5fcff";
   const secondColor = "#0065ba";
   const dispatch = d3.dispatch("link", "delete", "update");

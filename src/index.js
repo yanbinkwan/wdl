@@ -19,6 +19,7 @@ const ins = {
     svgContainer.appendChild(ActionButtons(canvas.zoom));
     app.appendChild(svgContainer);
 
+    canvas.zoom.scaleTo(select(".svg-box"), 7);
     if (tasks.length > 0) {
       const generator = Generator.create();
       tasks.forEach(task => {
